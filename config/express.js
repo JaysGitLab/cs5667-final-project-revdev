@@ -11,7 +11,7 @@ module.exports = function() {
 
   if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
-  } else if (process.env.NODE_ENV === 'producton') {
+  } else if (process.env.NODE_ENV === 'production') {
     app.use(compress());
   }
 
