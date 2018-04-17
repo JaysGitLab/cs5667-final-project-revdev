@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Green Valley Park Reservation System",
   "main": "server.js",
+  "scripts": {
+    "test": "mocha --reporter spec app/tests"
+  },
   "dependencies": {
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
@@ -22,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/JaysGitLab/cs5667-final-project-revdev/issues"
   },
-  "homepage": "https://github.com/JaysGitLab/cs5667-final-project-revdev#readme"
+  "homepage": "https://github.com/JaysGitLab/cs5667-final-project-revdev#readme",
+  "devDependencies": {
+    "should": "^13.2.1",
+    "supertest": "^3.0.0"
+  }
 }

@@ -59,3 +59,4 @@ typings/
 
 # Private application files
 config/env/development.js
+config/env/test.js
