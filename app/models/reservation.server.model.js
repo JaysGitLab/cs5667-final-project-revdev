@@ -17,7 +17,8 @@ const ReservationSchema = new Schema({
   },
   startTime: {
     type: Date,
-    required: 'Start Time required'
+    required: 'Start Time required',
+    validate: sameDate
   },
   endTime: {
     type: Date,
@@ -31,5 +32,9 @@ const ReservationSchema = new Schema({
   purpose: String,
   comments: String
 });
+
+function checkDates(value) {
+   return this.get < value.startDate.getDate();
+}
 
 mongoose.model('Reservation', ReservationSchema);
