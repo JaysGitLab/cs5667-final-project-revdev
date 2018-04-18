@@ -33,7 +33,7 @@ describe('Event Model Unit Tests:', () => {
         });
 
         // Test 2 checks model validation for event with no email
-        it('Should not be able to save a event without an email', () => {
+        it('Should not be able to save an event without an email', () => {
             event.eventType = '';
             event.save((err) => {
                 should.exist(err);
@@ -41,7 +41,7 @@ describe('Event Model Unit Tests:', () => {
         });
 
         // Test 3 checks model validation for duplicated eventType
-        it('Should not be able to save a event with duplicated eventType', () => {
+        it('Should not be able to save an event with duplicated eventType', () => {
             eventB = new Event({
                 eventType: 'Birthday Party',
             });
@@ -55,7 +55,7 @@ describe('Event Model Unit Tests:', () => {
         });
 
         // Test 4 checks model validation for event with wrong min/max people count
-        it('Should not be able to save a event without wront min/max people count', () => {
+        it('Should not be able to save an event with wrong min/max people count', () => {
             event.numberOfPeopleFrom = 10;
             event.numberOfPeopleTo = 10;
             event.save((err) => {
