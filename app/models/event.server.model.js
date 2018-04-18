@@ -30,7 +30,7 @@ const EventSchema = new Schema({
     free_cancelation: {
         type: Number,
         default: 5
-    }
+    },
     max_number_of_days: {
         type: Number,
         default: 1
