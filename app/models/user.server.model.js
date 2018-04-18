@@ -22,6 +22,12 @@ const UserSchema = new Schema({
   salt: {
     type: String
   },
+  provider: {
+    type: String,
+    required: 'Provider is required'
+  },
+  providerId: String,
+  providerData: {},
   created: {
     type: Date,
     default: Date.now
@@ -40,6 +46,12 @@ UserSchema.pre('save', function(next) {
 // Instance method, hashes password string with crypto mod
 UserSchema.methods.hashPassword = function(password) {
   return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha1').toString('base64');
+};
+
+// Instance function to authenticate user password
+// Call from User model instance as user.authenticate('password');
+UserSchema.methods.authenticate = function(password) {
+  return this.password === this.hashPassword(password);
 };
 
 // Use Schema instance to define User model
