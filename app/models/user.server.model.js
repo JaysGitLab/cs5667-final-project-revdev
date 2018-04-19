@@ -34,6 +34,15 @@ const UserSchema = new Schema({
   }
 });
 
+// Virtual attribute for fullName
+UserSchema.virtual('fullName').get(function() {
+  return this.firstName + ' ' + this.lastName;
+}).set(function(fullName) {
+  const splitName = fullName.split(' ');
+  this.firstName = splitName[0] || '';
+  this.lastName = splitName[1] || '';
+});
+
 // Pre-save middleware to handle hashing of user passwords
 UserSchema.pre('save', function(next) {
   if (this.password) {
@@ -53,6 +62,12 @@ UserSchema.methods.hashPassword = function(password) {
 UserSchema.methods.authenticate = function(password) {
   return this.password === this.hashPassword(password);
 };
+
+// Include getters when converting document to JSON
+UserSchema.set('toJSON', {
+  getters: true,
+  virtuals: true
+});
 
 // Use Schema instance to define User model
 mongoose.model('User', UserSchema);
