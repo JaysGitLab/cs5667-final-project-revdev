@@ -4,6 +4,6 @@ exports.render = function (req, res) {
   res.render('index', {
     title: 'Welcome to Green Valley Community Park',
     headline: 'Reservation System',
-    userFullName: req.user ? req.user : ''
+    userFullName: req.user ? req.user.fullName : ''
   });
 };
