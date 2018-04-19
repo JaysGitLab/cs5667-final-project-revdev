@@ -6,8 +6,8 @@ function getErrorMessage(err) {
 
   if (err.code) {
     switch (err.code) {
-      case: 11000:
-      case: 11001: 
+      case 11000:
+      case 11001: 
         message = 'Email already exists';
         break;
       default: 
@@ -25,7 +25,7 @@ function getErrorMessage(err) {
   return message;
 };
 
-exports.renderSignin = function(req, res, next {
+exports.renderSignin = function(req, res, next) {
   if (!req.user) {
     res.render('signin', {
       title: 'Sign In Form',
