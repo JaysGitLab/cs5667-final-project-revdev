@@ -4,21 +4,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// https://stackoverflow.com/questions/18001478/referencing-another-schema-in-mongoose
 const ReservationSchema = new Schema({
   email: {
     type: String,
     required: 'Email is required',
     match: [/.+\@.+\..+/, "Please fill a valid email address"]
   },
-  date: {
+  dateCreated: {
     type: Date,
     required: 'Reservation Date required',
     default: Date.now()
   },
   startTime: {
     type: Date,
-    required: 'Start Time required',
-    validate: sameDate
+    required: 'Start Time required'
   },
   endTime: {
     type: Date,
@@ -26,15 +26,16 @@ const ReservationSchema = new Schema({
   },
   areas: String,
   eventType: {
-    type: String,
-    required: 'Event Type required'
+    type: mongoose.Schema.Types.ObjectId,
+    required: 'Event Type required',
+    ref: 'Event'
   },
   purpose: String,
   comments: String
 });
 
 function checkDates(value) {
-   return this.get < value.startDate.getDate();
+   return this.startTime < value.endTime;
 }
 
 mongoose.model('Reservation', ReservationSchema);
