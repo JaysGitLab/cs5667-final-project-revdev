@@ -32,8 +32,8 @@ describe('Event Model Unit Tests:', () => {
             });
         });
 
-        // Test 2 checks model validation for event with no email
-        it('Should not be able to save an event without an email', () => {
+        // Test 2 checks model validation for event with no eventType 
+        it('Should not be able to save an event without an eventType', () => {
             event.eventType = '';
             event.save((err) => {
                 should.exist(err);
