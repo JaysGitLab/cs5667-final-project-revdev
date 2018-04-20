@@ -13,7 +13,7 @@ describe('User Model Unit Tests:', () => {
       firstName: 'Full',
       lastName: 'Name',
       phone: '828-555-1234',
-      email: 'test@test.com',
+      username: 'test@test.com',
       password: 'password',
     });
 
@@ -29,35 +29,34 @@ describe('User Model Unit Tests:', () => {
       });
     });
 
-    // Test 2 checks model validation for user with no email 
-    it('Should not be able to save a user without an email', () => {
-      user.email = '';
+    // Test 2 checks model validation for user with no username 
+    it('Should not be able to save a user without an username', () => {
+      user.username = '';
       user.save((err) => {
         should.exist(err);
       });
     });
     
-    // Test 3 checks model validation for duplicated email 
-    it('Should not be able to save a user with duplicated email', () => {
+    // Test 3 checks model validation for duplicated username 
+    it('Should not be able to save a user with duplicated username', () => {
       userB = new User({
         firstName: 'Full',
         lastName: 'Name',
         phone: '828-555-1234',
-        email: 'test@test.com',
+        username: 'test@test.com',
         password: 'password',
       });
 
-      userB.save((err) => {
-      });
+      userB.save((err) => {});
 
       user.save((err) => {
         should.exist(err);
       });
     });
     
-    // Test 4 checks model validation for improperly formatted email 
-    it('Should not be able to save a user with improperly formed email', () => {
-      user.email = 'email';
+    // Test 4 checks model validation for improperly formatted username 
+    it('Should not be able to save a user with improperly formed username', () => {
+      user.username = 'username';
       user.save((err) => {
         should.exist(err);
       });
