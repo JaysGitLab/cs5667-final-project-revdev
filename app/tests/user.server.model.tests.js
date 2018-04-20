@@ -15,6 +15,7 @@ describe('User Model Unit Tests:', () => {
       phone: '828-555-1234',
       username: 'test@test.com',
       password: 'password',
+      provider: 'local',
     });
 
     done();
@@ -45,6 +46,7 @@ describe('User Model Unit Tests:', () => {
         phone: '828-555-1234',
         username: 'test@test.com',
         password: 'password',
+        provider: 'local',
       });
 
       userB.save((err) => {});

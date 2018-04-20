@@ -2,7 +2,7 @@ const app = require('../../server');
 const request = require('supertest');
 const should = require('should');
 const mongoose = require('mongoose');
-const User - mongoose.model('User');
+const User = mongoose.model('User');
 
 let user, userB;
 
@@ -14,6 +14,7 @@ describe('User Controller Unit Tests:', () => {
       displayName: 'Full Name',
       username: 'test@test.com',
       password: 'password',
+      provider: 'local',
     });
   });
 
@@ -35,7 +36,7 @@ describe('User Controller Unit Tests:', () => {
           done();
         });
     });
-  };
+  });
 
   describe('Testing the POST methods', () => {
     it('Should be able to signup', (done) => {
@@ -58,6 +59,7 @@ describe('User Controller Unit Tests:', () => {
         displayName: 'Jane Doe',
         username: 'jane@email.com',
         password: 'password',
+        provider: 'local',
       });
 
       userB.save(() => {});
