@@ -16,6 +16,8 @@ describe('User Controller Unit Tests:', () => {
       password: 'password',
       provider: 'local',
     });
+
+    done();
   });
 
   describe('Testing the GET methods', () => {
@@ -23,7 +25,7 @@ describe('User Controller Unit Tests:', () => {
       request(app).get('/signup/')
         .expect(200)
         .end((err, res) => {
-          res.body.should.be.html();
+          res.body.should.be.html;
           done();
         });
     });
@@ -32,7 +34,7 @@ describe('User Controller Unit Tests:', () => {
       request(app).get('/signin/')
         .expect(200)
         .end((err, res) => {
-          res.body.should.be.html();
+          res.body.should.be.html;
           done();
         });
     });
@@ -47,7 +49,7 @@ describe('User Controller Unit Tests:', () => {
         .field('password', user.password)
         .expect(200)
         .end((err, res) => {
-          res.body.should.be.html();
+          res.body.should.be.html;
           done();
       });
     });
@@ -71,7 +73,7 @@ describe('User Controller Unit Tests:', () => {
         .field('password', userB.password)
         .expect(200)
         .end((err, res) => {
-          res.body.should.be.html();
+          res.body.should.be.html;
           done();
         });
       });
