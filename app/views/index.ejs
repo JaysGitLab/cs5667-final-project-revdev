@@ -5,14 +5,17 @@
         <title><%= title %></title>
     </head>
     <body>
-        <!-- Load the static image file  -->
-        <img src="img/GvcpLogo.png" alt="Logo">
-        <h2><%= title%></h2>
-        <h3><%= headline%></h3>
-
-        <a href="/singup">Signup</a>
-        <a href="/signin">Signin</a>
-        <a href="/reservation">Make a reservation</a>
-
+      <!-- Load the static image file  -->
+      <img src="img/GvcpLogo.png" alt="Logo">
+      <h2><%= title%></h2>
+      <h3><%= headline%></h3>
+      <% if (userFullName) { %>
+        <h4>Hello <%=userFullName %></h4>
+        <a href="/signout">Sign out</a>
+      <% } else { %>
+        <a href="/signup">Sign up</a>
+        <a href="/signin">Sign in</a>
+      <% } %>
+      <a href="/reservation">Make a reservation</a>
     </body>
 </html>
