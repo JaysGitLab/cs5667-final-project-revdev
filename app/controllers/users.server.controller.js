@@ -89,6 +89,7 @@ exports.updateUser = function(req, res, next) {
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
   user.phone = req.body.phone;
+  user.username = req.body.username;
   user.password = req.body.password;
 
   user.save((err) => {

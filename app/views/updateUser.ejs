@@ -23,7 +23,8 @@
       <input type="text" name="phone" value="<%=user.phone %>" />
     </div>
     <div>
-      <input type="hidden" name="username" value="<%=user.username %>" />
+      <label>Email:</label>
+      <input type="text" name="username" value="<%=user.username %>" />
     </div>
     <div>
       <label>Password:</label>
@@ -32,7 +33,7 @@
     <%if (user.admin) { %>
       <div>
         <label>Admin:</label>
-        <input type="checkbox" name="admin" value="user.admin" />
+        <input type="checkbox" name="admin" value="<%=user.admin %>" />
       </div>
     <% } %>
     <div>
