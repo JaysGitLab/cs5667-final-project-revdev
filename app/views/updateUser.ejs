@@ -9,22 +9,21 @@
   <% for(var i in messages) { %>
     <div class="flash"><%=messages[i] %></div>
   <% } %>
-  <form action="/update" method="post">
+  <form action="/updateUser" method="post">
     <div>
       <label>First Name:</label>
-      <input type="text" name="firstName" />
+      <input type="text" name="firstName" value="<%=user.firstName %>" />
     </div>
     <div>
       <label>Last Name:</label>
-      <input type="text" name="lastName" />
+      <input type="text" name="lastName" value="<%=user.lastName %>" />
     </div>
     <div>
       <label>Phone:</label>
-      <input type="text" name="phone" />
+      <input type="text" name="phone" value="<%=user.phone %>" />
     </div>
     <div>
-      <label>Email:</label>
-      <input type="text" name="username" />
+      <input type="hidden" name="username" value="<%=user.username %>" />
     </div>
     <div>
       <label>Password:</label>
@@ -33,11 +32,11 @@
     <%if (user.admin) { %>
       <div>
         <label>Admin:</label>
-        <input type="checkbox" name="admin" />
+        <input type="checkbox" name="admin" value="user.admin" />
       </div>
     <% } %>
     <div>
-      <input type="submit" value="Sign up" />
+      <input type="submit" value="Save" />
     </div>
   </form>
 </body>

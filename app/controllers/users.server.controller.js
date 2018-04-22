@@ -8,7 +8,7 @@ function getErrorMessage(err) {
     switch (err.code) {
       case 11000:
       case 11001: 
-        message = 'Email already exists';
+        message = 'Email already exists' + err.code;
         break;
       default: 
         message = 'Something went wrong';
@@ -48,10 +48,10 @@ exports.renderSignup = function(req, res, next) {
 };
 
 exports.renderUpdate = function(req, res, next) {
-  if (!req.user) {
-    res.render('update-profile', {
+  if (req.user) {
+    res.render('updateUser', {
       title: 'Update Profile Form',
-      user: user,
+      user: req.user,
       messages: req.flash('error')
     });
   } else {
@@ -83,12 +83,7 @@ exports.signup = function(req, res, next) {
   }
 };
 
-exports.signout = function(req, res) {
-  req.logout();
-  res.redirect('/');
-};
-
-exports.update = function(req, res) {
+exports.updateUser = function(req, res, next) {
   const user = req.user;
 
   user.firstName = req.body.firstName;
@@ -105,4 +100,9 @@ exports.update = function(req, res) {
       return res.redirect('/');
     }
   });
+};
+
+exports.signout = function(req, res) {
+  req.logout();
+  res.redirect('/');
 };

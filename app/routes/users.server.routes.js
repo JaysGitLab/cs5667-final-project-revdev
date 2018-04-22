@@ -13,10 +13,10 @@ module.exports = function(app) {
       failureRedirect: '/signin',
       failureFlash: true
     }));
+  
+  app.route('/updateUser')
+    .get(users.renderUpdate)
+    .post(users.updateUser);
 
   app.get('/signout', users.signout);
-
-  app.route('/update-profile')
-    .get(users.renderUpdate)
-    .post(users.update);
 };
