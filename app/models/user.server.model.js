@@ -28,6 +28,7 @@ const UserSchema = new Schema({
   },
   providerId: String,
   providerData: {},
+  admin: Boolean,
   created: {
     type: Date,
     default: Date.now
