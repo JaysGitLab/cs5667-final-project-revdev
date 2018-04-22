@@ -75,3 +75,22 @@ exports.signout = function(req, res) {
   req.logout();
   res.redirect('/');
 };
+
+exports.update = function(req, res) {
+  const user = req.user;
+
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+  user.phone = req.body.phone;
+  user.password = req.body.password;
+
+  user.save((err) => {
+    if (err) {
+      return res.status(400).send({
+        message: getErrorMessage(err)
+      });
+    } else {
+      return res.redirect('/');
+    }
+  });
+};
