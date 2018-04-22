@@ -6,7 +6,7 @@ const UserSchema = new Schema({
   firstName: String,
   lastName: String,
   phone: String,
-  email: {
+  username: {
     type: String,
     unique: true,
     required: 'Email is required', 
@@ -22,10 +22,26 @@ const UserSchema = new Schema({
   salt: {
     type: String
   },
+  provider: {
+    type: String,
+    required: 'Provider is required'
+  },
+  providerId: String,
+  providerData: {},
+  admin: Boolean,
   created: {
     type: Date,
     default: Date.now
   }
+});
+
+// Virtual attribute for fullName
+UserSchema.virtual('fullName').get(function() {
+  return this.firstName + ' ' + this.lastName;
+}).set(function(fullName) {
+  const splitName = fullName.split(' ');
+  this.firstName = splitName[0] || '';
+  this.lastName = splitName[1] || '';
 });
 
 // Pre-save middleware to handle hashing of user passwords
@@ -41,6 +57,18 @@ UserSchema.pre('save', function(next) {
 UserSchema.methods.hashPassword = function(password) {
   return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha1').toString('base64');
 };
+
+// Instance function to authenticate user password
+// Call from User model instance as user.authenticate('password');
+UserSchema.methods.authenticate = function(password) {
+  return this.password === this.hashPassword(password);
+};
+
+// Include getters when converting document to JSON
+UserSchema.set('toJSON', {
+  getters: true,
+  virtuals: true
+});
 
 // Use Schema instance to define User model
 mongoose.model('User', UserSchema);
