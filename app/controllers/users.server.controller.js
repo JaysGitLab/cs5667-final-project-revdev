@@ -75,13 +75,3 @@ exports.signout = function(req, res) {
   req.logout();
   res.redirect('/');
 };
-
-exports.isAdmin = function(req, res, next) {
-  if (!req.user.admin) {
-    return res.status(403).send({
-      message: 'Admin access required'
-    });
-  }
-
-  next();
-};
