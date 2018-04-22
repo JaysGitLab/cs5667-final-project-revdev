@@ -47,6 +47,18 @@ exports.renderSignup = function(req, res, next) {
   }
 };
 
+exports.renderUpdate = function(req, res, next) {
+  if (!req.user) {
+    res.render('update-profile', {
+      title: 'Update Profile Form',
+      user: user,
+      messages: req.flash('error')
+    });
+  } else {
+    return res.redirect('/');
+  }
+};
+
 exports.signup = function(req, res, next) {
   if (!req.user) {
     const user = new User(req.body);
