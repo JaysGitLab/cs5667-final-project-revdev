@@ -15,4 +15,8 @@ module.exports = function(app) {
     }));
 
   app.get('/signout', users.signout);
+
+  app.route('/update-profile')
+    .get(users.renderUpdate)
+    .post(users.update);
 };
