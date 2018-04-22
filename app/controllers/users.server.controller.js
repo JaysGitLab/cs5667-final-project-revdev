@@ -8,7 +8,7 @@ function getErrorMessage(err) {
     switch (err.code) {
       case 11000:
       case 11001: 
-        message = 'Email already exists' + err.code;
+        message = 'Email already exists';
         break;
       default: 
         message = 'Something went wrong';
@@ -91,6 +91,11 @@ exports.updateUser = function(req, res, next) {
   user.phone = req.body.phone;
   user.username = req.body.username;
   user.password = req.body.password;
+  if (req.body.admin) {
+    user.admin = true;
+  } else {
+    user.admin = false;
+  }
 
   user.save((err) => {
     if (err) {
