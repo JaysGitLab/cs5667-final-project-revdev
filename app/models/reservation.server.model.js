@@ -22,7 +22,8 @@ const ReservationSchema = new Schema({
   },
   endTime: {
     type: Date,
-    required: 'End Time required'
+    required: 'End Time required',
+    validate: [dateValidator, 'Start Date must be less than End Date']
   },
   areas: String,
   eventType: {
@@ -34,8 +35,11 @@ const ReservationSchema = new Schema({
   comments: String
 });
 
-function checkDates(value) {
-   return this.startTime < value.endTime;
+// function that validate the startTime and endTime
+function dateValidator(value) {
+  // `this` is the mongoose document
+  return this.startTime <= value;
 }
+
 
 mongoose.model('Reservation', ReservationSchema);
