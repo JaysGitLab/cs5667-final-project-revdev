@@ -6,26 +6,28 @@ const Schema = mongoose.Schema;
 
 // https://stackoverflow.com/questions/18001478/referencing-another-schema-in-mongoose
 const ReservationSchema = new Schema({
-  email: {
+  username: {
     type: String,
     required: 'Email is required',
     match: [/.+\@.+\..+/, "Please fill a valid email address"]
   },
   dateCreated: {
     type: Date,
-    required: 'Reservation Date required',
     default: Date.now()
   },
   startTime: {
     type: Date,
-    required: 'Start Time required'
+    required: 'Start Date/Time required'
   },
   endTime: {
     type: Date,
-    required: 'End Time required',
-    validate: [dateValidator, 'Start Date must be less than End Date']
+    required: 'End Date/Time required',
+    validate: [dateValidator, 'Start Date/Time must be less than End Date/Time']
   },
-  areas: String,
+  areas: {
+    type: String,
+    enum: ['Picnic shelter', 'Lower field']
+  },
   eventType: {
     type: mongoose.Schema.Types.ObjectId,
     required: 'Event Type required',
@@ -43,6 +45,5 @@ function dateValidator(value) {
          (this.startTime.getMonth() === value.getMonth()) && 
          (value.getDate() + value.eventType.maxNumberOfDays <= this.startTime.getDate());
 }
-
 
 mongoose.model('Reservation', ReservationSchema);
