@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      <%=title %>
+  </title>
+</head>
+<body>
+  <% for(var i in messages) { %>
+    <div class="flash"><%=messages[i] %></div>
+  <% } %>
+  <form action="/create" method="post">
+	<div>
+      <label>Event Type:</label>
+      <input type="text" name="eventType" />
+    </div>
+    <div>
+      <label>Min Number of People:</label>
+      <input type="number" name="numberOfPeopleFrom" />
+    </div>
+    <div>
+      <label>Max Number of People:</label>
+      <input type="number" name="numberOfPeopleTo" />
+    </div>
+    <div>
+      <label>Deposit:</label>
+      <input type="number" name="deposit" />
+    </div>
+    <div>
+      <label>Number of Days:</label>
+      <input type="number" name="maxNumberOfDays" />
+    </div>
+    <div>
+      <input type="submit" value="Create" />
+    </div>
+  </form>
+</body>
+</html>
