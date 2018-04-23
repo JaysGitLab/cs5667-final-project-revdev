@@ -4,8 +4,8 @@
 const app = require('../../server.js');
 const should = require('should');
 const mongoose = require('mongoose');
-const Reservation = mongoose.model('Reservation');
 const Event = mongoose.model('Event');
+const Reservation = mongoose.model('Reservation');
 
 let reservation;
 

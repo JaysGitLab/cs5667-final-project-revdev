@@ -29,7 +29,7 @@ const ReservationSchema = new Schema({
     enum: ['Picnic shelter', 'Lower field']
   },
   eventType: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: 'Event Type required',
     ref: 'Event'
   },

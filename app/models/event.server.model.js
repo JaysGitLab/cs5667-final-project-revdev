@@ -46,7 +46,6 @@ const EventSchema = new Schema({
 
 mongoose.model('Event', EventSchema);
 
-
 // function that validate the startDate and endDate
 function numberOfPeopleValidator(value) {
     // `this` is the mongoose document
