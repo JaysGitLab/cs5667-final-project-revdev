@@ -4,14 +4,56 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const OAuth2Client = google.auth.OAuth2;
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-const TOKEN_PATH = './env/credentials.json';
+//const TOKEN_PATH = '../../config/env/client_secret.json';
+const TOKEN_PATH = './config/env/token.json';
+const CLIENT_SECRET = './config/env/client_secret.json';
 
 exports.listEvents = function(date) {
   // Load client secrets from a local file.
-  fs.readFile(TOKEN_PATH, (err, content) => {
+  console.log('loading client secrets');
+  fs.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
-    authorize(JSON.parse(content), listEvents);
+
+    return authorize(JSON.parse(content), date, listEvents);
+    //authorize(JSON.parse(content), insertEvent);
+  });
+};
+
+
+exports.createEvents = function (date) {
+  // Load client secrets from a local file.
+  console.log('loading client secrets');
+  fs.readFile(CLIENT_SECRET, (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    // Authorize a client with credentials, then call the Google Drive API.
+
+    let event = {
+      'summary': 'Test Event 2',
+      'location': 'Green Valley Parkway',
+      'description': 'Birthday',
+      'start': {
+        'dateTime': '2018-04-23T17:00:00-06:00',
+        'timeZone': 'America/New_York',
+      },
+      'end': {
+        'dateTime': '2018-04-23T19:00:00-06:00',
+        'timeZone': 'America/New_York',
+      },
+      'attendees': [
+        {'email': 'lpage@example.com'},
+        {'email': 'sbrin@example.com'},
+      ],
+      'reminders': {
+        'useDefault': false,
+        'overrides': [
+          {'method': 'email', 'minutes': 24 * 60},
+          {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    };
+
+    authorize(JSON.parse(content), event, insertEvent);
     //authorize(JSON.parse(content), insertEvent);
   });
 };
@@ -20,22 +62,26 @@ exports.listEvents = function(date) {
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
  * @param {Object} credentials The authorization client credentials.
+ * @param data
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials, data, callback) {
+  console.log('Test ' + credentials.installed);
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) {
-      //getAccessToken(oAuth2Client, callback);
       console.log('Wrong Access Token for Calendar API -> ' + err);
+      // getAccessToken(oAuth2Client, callback);
       return err;
     }
     console.log('Google Calendar authentication was successful');
     oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
+    var all_events =  callback(oAuth2Client, data);
+    console.log('authorize ' + all_events);
+    return all_events
   });
 }
 
@@ -72,14 +118,17 @@ function getAccessToken(oAuth2Client, callback) {
 
 /**
  * Lists the next 10 events on the user's primary calendar.
+ * @date retrn
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ * @param date
  */
 function listEvents(auth, date) {
   const calendar = google.calendar({version: 'v3', auth});
+  console.log('Listing all events from a certain date');
   console.log(date);
   calendar.events.list({
     calendarId: 'primary',
-    timeMin: (new Date()).toISOString(),
+    timeMin: date,
     maxResults: 10,
     singleEvents: true,
     orderBy: 'startTime',
@@ -88,10 +137,14 @@ function listEvents(auth, date) {
     const events = data.items;
     if (events.length) {
       console.log('Upcoming 10 events:');
+      var all_events = [];
       events.map((event, i) => {
         const start = event.start.dateTime || event.start.date;
+        const end = event.end.dateTime || event.end.date;
+        all_events.push({start: start, end: end});
         console.log(`${start} - ${event.summary}`);
       });
+      console.log(all_events);
     } else {
       console.log('No upcoming events found.');
     }
@@ -103,34 +156,9 @@ function listEvents(auth, date) {
 // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
 // stored credentials.
 
-function insertEvent(auth) {
+function insertEvent(auth, event) {
   const calendar = google.calendar({version: 'v3', auth});
-
-  var event = {
-    'summary': 'Test Event 2',
-    'location': 'Green Valley Parkway',
-    'description': 'Birthday',
-    'start': {
-      'dateTime': '2018-04-20T11:00:00-06:00',
-      'timeZone': 'America/New_York',
-    },
-    'end': {
-      'dateTime': '2018-04-20T12:00:00-06:00',
-      'timeZone': 'America/New_York',
-    },
-    'attendees': [
-      {'email': 'lpage@example.com'},
-      {'email': 'sbrin@example.com'},
-    ],
-    'reminders': {
-      'useDefault': false,
-      'overrides': [
-        {'method': 'email', 'minutes': 24 * 60},
-        {'method': 'popup', 'minutes': 10},
-      ],
-    },
-  };
-
+  console.log('create event -> ' + event);
   calendar.events.insert({
     auth: auth,
     calendarId: 'primary',

@@ -3,11 +3,11 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const configureMongoose = require('./config/mongoose');
 const configureExpress = require('./config/express');
 const configurePassport = require('./config/passport');
-const configureCalendarAPI = require('./config/calendar');
+//const configureCalendarAPI = require('./config/calendar');
 const db = configureMongoose();
 const app = configureExpress();
 const passport = configurePassport();
-const calendarAPI = configureCalendarAPI();
+//const calendarAPI = configureCalendarAPI();
 
 app.listen(3000);
 module.exports = app;
