@@ -6,7 +6,7 @@ const User = mongoose.model('User');
 const Event = mongoose.model('Event');
 
 let user;
-
+let eventName;
 
 describe('Event Controller Unit Tests:', () => {
       beforeEach((done) => {
@@ -34,7 +34,7 @@ describe('Event Controller Unit Tests:', () => {
       });
       describe('Test to create.', () => {
           it('Should be able to create a new event.', () => {
-              event.create((err) => {
+              eventName.create((err) => {
                   should.exist(err);
               });
           });    

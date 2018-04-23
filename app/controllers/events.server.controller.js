@@ -25,7 +25,7 @@ function getErrorMessage(err) {
 exports.create = function(req, res){
     const event = new Event(req.body);
     event.creator = req.user;
-    event.save((errr) => {
+    event.save((err) => {
         if (err){
             return res.status(400).send({
                 message: getErrorMessage(err)});
