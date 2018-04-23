@@ -1,4 +1,4 @@
-const event = require('../../app/controllers/event.server.controller');
+const event = require('../../app/controllers/events.server.controller');
 
 module.exports = function(app) {
   app.route('/create')

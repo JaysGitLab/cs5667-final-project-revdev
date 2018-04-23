@@ -23,6 +23,7 @@ function getErrorMessage(err) {
 };
 
 exports.create = function(req, res){
+  console.log('Event create method is called');
     const event = new Event(req.body);
     event.creator = req.user;
     event.save((err) => {
@@ -36,6 +37,7 @@ exports.create = function(req, res){
 };
 
 exports.list = function(req, res) {
+  console.log('Event List method is called');
     Event.find().sort('-created').populate('creator', 'firstName lastName fullName').exec((err, event) => {
         if (err) {
             return res.status(400).send({
