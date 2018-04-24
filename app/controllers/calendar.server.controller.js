@@ -8,6 +8,8 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = './config/env/token.json';
 const CLIENT_SECRET = './config/env/client_secret.json';
 
+var _events = [];
+
 exports.listEvents = function(date) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
@@ -15,9 +17,15 @@ exports.listEvents = function(date) {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
 
-    return authorize(JSON.parse(content), date, listEvents);
+    authorize(JSON.parse(content), date, listEvents);
     //authorize(JSON.parse(content), insertEvent);
+    console.log('list Events: ' + _events);
   });
+};
+
+
+exports.getEvents = function () {
+  return _events;
 };
 
 
@@ -79,9 +87,8 @@ function authorize(credentials, data, callback) {
     }
     console.log('Google Calendar authentication was successful');
     oAuth2Client.setCredentials(JSON.parse(token));
-    var all_events =  callback(oAuth2Client, data);
-    console.log('authorize ' + all_events);
-    return all_events
+    callback(oAuth2Client, data);
+
   });
 }
 
@@ -137,14 +144,13 @@ function listEvents(auth, date) {
     const events = data.items;
     if (events.length) {
       console.log('Upcoming 10 events:');
-      var all_events = [];
       events.map((event, i) => {
         const start = event.start.dateTime || event.start.date;
         const end = event.end.dateTime || event.end.date;
-        all_events.push({start: start, end: end});
+        _events.push({start: start, end: end});
         console.log(`${start} - ${event.summary}`);
       });
-      console.log(all_events);
+      console.log(_events);
     } else {
       console.log('No upcoming events found.');
     }
