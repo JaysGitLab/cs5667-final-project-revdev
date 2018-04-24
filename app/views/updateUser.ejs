@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      <%=title %>
+  </title>
+</head>
+<body>
+  <% for(var i in messages) { %>
+    <div class="flash"><%=messages[i] %></div>
+  <% } %>
+  <form action="/updateUser" method="post">
+    <div>
+      <label>First Name:</label>
+      <input type="text" name="firstName" value="<%=user.firstName %>" />
+    </div>
+    <div>
+      <label>Last Name:</label>
+      <input type="text" name="lastName" value="<%=user.lastName %>" />
+    </div>
+    <div>
+      <label>Phone:</label>
+      <input type="text" name="phone" value="<%=user.phone %>" />
+    </div>
+    <div>
+      <label>Email:</label>
+      <input type="text" name="username" value="<%=user.username %>" />
+    </div>
+    <div>
+      <label>Password:</label>
+      <input type="password" name="password" />
+    </div>
+    <%if (user.admin) { %>
+      <div>
+        <label>Admin:</label>
+        <input type="checkbox" name="admin" checked />
+      </div>
+    <% } %>
+    <div>
+      <input type="submit" value="Save" />
+    </div>
+  </form>
+</body>
+</html>
