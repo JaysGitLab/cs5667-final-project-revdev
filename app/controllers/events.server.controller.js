@@ -98,4 +98,10 @@ exports.hasAuthorization = function(req, res, next) {
             message: 'User is not authorized'});    
         }
     next(); 
+};
+
+exports.render = function(req, res){
+    res.render('eventCreate',{
+        title: 'Create an Event'
+    });
 }; 

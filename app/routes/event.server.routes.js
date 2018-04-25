@@ -5,5 +5,5 @@ module.exports = function(app) {
     .get(event.list)
     .post(event.create);
 
-  app.get('/eventCreate', event.create);
+  app.get('/eventCreate', event.render);
 };
