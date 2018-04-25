@@ -1,14 +1,15 @@
+const config = require('../../config/config');
+
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const readline = require('readline');
 const { google } = require('googleapis');
 const OAuth2Client = google.auth.OAuth2;
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-//const TOKEN_PATH = '../../config/env/client_secret.json';
-const TOKEN_PATH = './config/env/token.json';
-const CLIENT_SECRET = './config/env/client_secret.json';
-
-var _events = [];
+// const TOKEN_PATH = './config/env/token.json';
+// const CLIENT_SECRET = './config/env/client_secret.json';
+const TOKEN_PATH = config.tokenPath;
+const CLIENT_SECRET = config.clientSecrete;
 
 exports.listEvents = function(date) {
   // Load client secrets from a local file.
@@ -19,15 +20,8 @@ exports.listEvents = function(date) {
 
     authorize(JSON.parse(content), date, freeBusyStatus);
     //authorize(JSON.parse(content), insertEvent);
-    console.log('list Events: ' + _events);
   });
 };
-
-
-exports.getEvents = function () {
-  return _events;
-};
-
 
 exports.createEvents = function (date) {
   // Load client secrets from a local file.
@@ -164,7 +158,7 @@ function listEvents(auth, date) {
 
 function insertEvent(auth, event) {
   const calendar = google.calendar({version: 'v3', auth});
-  console.log('create event -> ' + event);
+  console.log('create event -> ' + event.summary);
   calendar.events.insert({
     auth: auth,
     calendarId: 'primary',
@@ -179,8 +173,8 @@ function insertEvent(auth, event) {
 }
 
 function freeBusyStatus (auth, date) {
-  const startDate = new Date('20 April 2018 12:00').toISOString()
-  const endDate = new Date('22 April 2018 13:00').toISOString()
+  const startDate = date.start.dateTime; //new Date('20 April 2018 12:00').toISOString();
+  const endDate = date.end.dateTime; //new Date('22 April 2018 13:00').toISOString();
   // 2018-04-20T16:00:00.000Z
   var calID = 'primary';
 
@@ -198,11 +192,13 @@ function freeBusyStatus (auth, date) {
     if (err) {
       console.log ('error: ' + err)
     } else {
-      var events = response.request._eventsCount;
+      var events = response.data.calendars['primary']['busy'].length;
       if (events === 0) {
         console.log('No upcoming events found.');
+        insertEvent(auth, date);
       } else {
         console.log('busy in here...');
+        console.log('Event ' + date.summary + ' could not be crated');
       }
     }
   })
