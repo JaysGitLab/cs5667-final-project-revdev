@@ -14,8 +14,9 @@ exports.renderCreateRes = function(req, res, next) {
   if (req.user) {
     res.render('createRes', {
       title: 'Create a Reservation',
-      eventTypes: db.collection('eventType').find().toArray(), 
-      messages: req.flash('error') || req.flash('info')
+      user: req.user,
+      //eventTypes: db.collection('eventType').find().toArray(), 
+      messages: req.flash('error')
     });
   } else {
     return res.redirect('/');
