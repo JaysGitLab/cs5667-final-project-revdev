@@ -25,7 +25,7 @@ const ReservationSchema = new Schema({
     validate: [dateValidator, 'Start Date/Time must be less than End Date/Time and less than max days for event']
   },
   areas: {
-    type: String,
+    type: [String],
     enum: ['Picnic shelter', 'Lower field']
   },
   eventType: {
