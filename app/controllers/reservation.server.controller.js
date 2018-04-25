@@ -1,7 +1,6 @@
 const Reservation = require('mongoose').model('Reservation');
-const passport = require('passport');
 
-function getErrorMessage (err) {
+function getErrorMessage(err) {
   if (err.errors) {
     for (let errName in err.errors) {
       if (err.errors[errName].message) return err.errors[errName].message;
@@ -11,17 +10,28 @@ function getErrorMessage (err) {
   }
 };
 
-exports.createRes = function(req, res) {
+exports.renderCreateRes = function(req, res, next) {
+  if (req.user) {
+    res.render('createRes', {
+      title: 'Create a Reservation',
+      messages: req.flash('error') || req.flash('info')
+    });
+  } else {
+    return res.redirect('/');
+  }
+};
+
+exports.createRes = function(req, res, next) {
   const reservation = new Reservation(req.body);
-  reservation.email = req.user.username;
+  reservation.username = req.user.username;
 
   reservation.save((err) => {
     if (err) {
-      return res.status(400).send({
-        message: getErrorMessage(err)
-      });
+      const message = getErrorMessage(err);
+      req.flash('error', message);
+      return res.redirect('/createRes');
     } else {
-      res.status(200).json(reservation);
+      return res.redirect('/');
     }
   });
 };
