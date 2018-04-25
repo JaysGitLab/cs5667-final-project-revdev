@@ -17,7 +17,7 @@ exports.listEvents = function(date) {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
 
-    authorize(JSON.parse(content), date, listEvents);
+    authorize(JSON.parse(content), date, freeBusyStatus);
     //authorize(JSON.parse(content), insertEvent);
     console.log('list Events: ' + _events);
   });
@@ -176,4 +176,34 @@ function insertEvent(auth, event) {
     }
     console.log('Event created: %s', event.data.summary);
   });
+}
+
+function freeBusyStatus (auth, date) {
+  const startDate = new Date('20 April 2018 12:00').toISOString()
+  const endDate = new Date('22 April 2018 13:00').toISOString()
+  // 2018-04-20T16:00:00.000Z
+  var calID = 'primary';
+
+  const check = {
+    resource: {
+      auth: auth,
+      timeMin: startDate,
+      timeMax: endDate,
+      items: [{id: calID}]
+    }
+  };
+  const calendar = google.calendar({version: 'v3', auth});
+
+  calendar.freebusy.query (check, function (err, response) {
+    if (err) {
+      console.log ('error: ' + err)
+    } else {
+      var events = response.request._eventsCount;
+      if (events === 0) {
+        console.log('No upcoming events found.');
+      } else {
+        console.log('busy in here...');
+      }
+    }
+  })
 }
