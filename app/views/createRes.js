@@ -29,7 +29,11 @@
     </div>
     <div>
       <label>Purpose:</label>
-      <input type="" name="eventType" />
+      <% for(var i in eventTypes) {%>
+        <select name="eventType">
+          <option value="<%= eventTypes[i].eventType%>"</option>
+        </select>
+      <% } %>
     </div>
     <div>
       <label>Other Relevant Information:</label>
