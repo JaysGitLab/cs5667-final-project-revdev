@@ -28,7 +28,6 @@ describe('Reservation Model Unit Tests:', () => {
 	freeCancelation: 5,
 	maxNumberOfDays: 1
       }),
-      purpose: 'test purpose',
       comments: 'test comments'
     });
 

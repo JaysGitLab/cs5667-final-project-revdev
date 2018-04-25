@@ -33,7 +33,6 @@ const ReservationSchema = new Schema({
     required: 'Event Type required',
     ref: 'Event'
   },
-  purpose: String,
   comments: String
 });
 
