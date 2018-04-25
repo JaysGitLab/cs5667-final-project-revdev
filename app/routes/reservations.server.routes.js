@@ -1,4 +1,4 @@
-const reservation = ('../../app/controllers/reservation.server.controller.js');
+const reservation = ('../../app/controllers/reservation.server.controller');
 
 module.exports = function(app) {
   app.route('/createRes')
