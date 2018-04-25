@@ -1,6 +1,6 @@
 const Reservation = require('mongoose').model('Reservation');
 
-function getErrorMessage(err) {
+function getErrorMessage (err) {
   if (err.errors) {
     for (let errName in err.errors) {
       if (err.errors[errName].message) return err.errors[errName].message;
