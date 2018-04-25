@@ -24,7 +24,12 @@ exports.renderCreateRes = function(req, res, next) {
 exports.createRes = function(req, res, next) {
   const reservation = new Reservation(req.body);
   reservation.username = req.user.username;
-
+  if (Array.isArray(req.body.areas) {
+    reservation.areas = [req.body.areas];
+  } else {
+    reservation.areas = req.body.areas;
+  }
+  
   reservation.save((err) => {
     if (err) {
       const message = getErrorMessage(err);
