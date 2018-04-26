@@ -21,7 +21,7 @@ exports.renderCreateRes = function(req, res) {
         title: 'Create a Reservation',
         user: req.user,
         eventTypes: events,
-        messages: req.flash('error')
+        messages: req.flash('error') || req.flash('info')
         });
       }
     })
@@ -32,20 +32,15 @@ exports.renderCreateRes = function(req, res) {
 
 exports.createRes = function(req, res) {
   const reservation = new Reservation(req.body);
-  if (Array.isArray(req.body.areas)) {
-    reservation.areas = [req.body.areas];
-  } else {
-    reservation.areas = req.body.areas;
-  }
   reservation.startTime = new Date(req.body.startTime);
   reservation.endTime = new Date(req.body.endTime);
-  
+
   reservation.save((err) => {
     if (err) {
-      const message = getErrorMessage(err);
-      req.flash('error', message);
+      req.flash('error', getErrorMessage(err));
       return res.redirect('/createRes');
     } else {
+      req.flash('info', 'Reservation added');
       return res.redirect('/');
     }
   });
