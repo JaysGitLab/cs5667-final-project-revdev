@@ -3,6 +3,7 @@
  */
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Event = require('mongoose').model('Event');
 
 // https://stackoverflow.com/questions/18001478/referencing-another-schema-in-mongoose
 const ReservationSchema = new Schema({
@@ -38,11 +39,15 @@ const ReservationSchema = new Schema({
 
 // Function that validates the startTime is before the end time
 // It also checks that the endTime date is within the max number of days of the event
-function dateValidator(value) {
-  // Calculate maximum end date based on eventType
+function dateValidator(endTime) {
   // `this` is the mongoose document
-  let maxEndDate = new Date(this.startTime.getTime() + (this.eventType.maxNumberOfDays * 24 * 60 * 60 * 1000));
-  return (this.startTime <= value) && (value <= maxEndDate);
+  // Calculate maximum end date based on eventType
+  let maxNumberOfDays = 0;
+  let startTime = this.startTime;
+  Event.findOne({_id: this.eventType}, 'maxNumberOfDays', function(err, eventT) {
+    let maxEndDate = new Date(startTime.getTime() + (eventT.maxNumberOfDays * 24 * 60 * 60 * 1000));
+    return (startTime <= endTime) && (endTime <= maxEndDate);
+  });
 }
 
 mongoose.model('Reservation', ReservationSchema);

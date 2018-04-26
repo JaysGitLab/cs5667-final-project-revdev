@@ -24,15 +24,19 @@
     </div>
     <div>
       <label>Area(s) Needed:</label><br />
-      <input type="checkbox" name="areas" value="Picnic shelter">Picnic shelter<br />
-      <input type="checkbox" name="areas" value="Lower field">Lower field<br />
+      <input type="checkbox" name="areas[]" value="Picnic shelter">Picnic shelter<br />
+      <input type="checkbox" name="areas[]" value="Lower field">Lower field<br />
     </div>
     <div>
       <label>Purpose:</label>
-      <% for(var event in eventTypes) {%>
+      <% for(var i in eventTypes) {%>
         <select name="eventType">
-          <option value="<%= event._id %>"><%= event.eventType %></option>
+          <option value="<%= eventTypes[i]._id %>"><%= eventTypes[i].eventType %></option>
         </select>
+      <% } %>
+        <ul><% for(var i in eventTypes) {%>
+          <li><%= eventTypes[i].eventType %>: <%= eventTypes[i].numberOfPeopleFrom %>-<%= eventTypes[i].numberOfPeopleTo %> people, cost $<%= eventTypes[i].cost %>, deposit $<%= eventTypes[i].deposit %>, free cancelation within <%= eventTypes[i].freeCancelation %> day(s), <%= eventTypes[i].maxNumberOfDays %> day(s) maximum</li>
+        </ul>
       <% } %>
     </div>
     <div>
