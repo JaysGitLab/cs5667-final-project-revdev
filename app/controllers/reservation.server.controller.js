@@ -13,7 +13,7 @@ function getErrorMessage (err) {
 
 exports.renderCreateRes = function(req, res) {
   if (req.user) {
-    Event.find({}, '_id, eventType', function(err, events) {
+    Event.find({}, '_id eventType', function(err, events) {
       if (err) {
         res.redirect('/');
       } else {
