@@ -6,43 +6,43 @@ const Schema = mongoose.Schema;
 
 // https://stackoverflow.com/questions/18001478/referencing-another-schema-in-mongoose
 const ReservationSchema = new Schema({
-  email: {
+  username: {
     type: String,
     required: 'Email is required',
     match: [/.+\@.+\..+/, "Please fill a valid email address"]
   },
-  dateCreated: {
+  created: {
     type: Date,
-    required: 'Reservation Date required',
     default: Date.now()
   },
   startTime: {
     type: Date,
-    required: 'Start Time required'
+    required: 'Start Date/Time required'
   },
   endTime: {
     type: Date,
-    required: 'End Time required',
-    validate: [dateValidator, 'Start Date must be less than End Date']
+    required: 'End Date/Time required',
+    validate: [dateValidator, 'Start Date/Time must be less than End Date/Time and less than max days for event']
   },
-  areas: String,
+  areas: {
+    type: [String],
+    enum: ['Picnic shelter', 'Lower field']
+  },
   eventType: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: 'Event Type required',
     ref: 'Event'
   },
-  purpose: String,
   comments: String
 });
 
-// function that validates the startTime is before the end time and that the year and month match
-// it also checks that the endTime date is within the max number of days of the event.
+// Function that validates the startTime is before the end time
+// It also checks that the endTime date is within the max number of days of the event
 function dateValidator(value) {
+  // Calculate maximum end date based on eventType
   // `this` is the mongoose document
-  return (this.startTime <= value) && (this.startTime.getFullYear() === value.getFullYear()) &&
-         (this.startTime.getMonth() === value.getMonth()) && 
-         (value.getDate() + value.eventType.maxNumberOfDays <= this.startTime.getDate());
+  let maxEndDate = new Date(this.startTime.getTime() + (this.eventType.maxNumberOfDays * 24 * 60 * 60 * 1000));
+  return (this.startTime <= value) && (value <= maxEndDate);
 }
-
 
 mongoose.model('Reservation', ReservationSchema);
