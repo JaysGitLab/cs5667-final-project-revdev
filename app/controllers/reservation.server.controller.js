@@ -48,3 +48,29 @@ exports.createRes = function(req, res) {
     }
   });
 };
+
+exports.list = function(req, res) {
+  Reservation.find().exec((err, listReservation) => {
+    if (err) {
+      return res.status(400).send({
+        message: getErrorMessage(err)
+      });
+    } else {
+      res.status(200).json(listReservation);
+    }
+  });
+};
+
+exports.renderList = function(req, res) {
+  Reservation.find().exec((err, listReservation) => {
+    if (err) {
+      return res.redirect('/');
+    } else {
+      res.render('listRes', {
+      title: 'View all Reservations',
+      list: res.status(200).json(listReservation),
+      messages: req.flash('error')
+      });
+    }
+  });
+};

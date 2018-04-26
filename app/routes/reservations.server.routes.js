@@ -4,4 +4,6 @@ module.exports = function(app) {
   app.route('/createRes')
     .get(reservation.renderCreateRes)
     .post(reservation.createRes);
+  app.route('/listRes')
+     .get(reservation.renderList);
 };

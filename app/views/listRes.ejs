@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      <%=title %>
+  </title>
+</head>
+<body>
+  <% for(var i in messages) { %>
+    <div class="flash"><%=messages[i] %></div>
+  <% } %>
+  <form action="/listRes" method="post">
+    <div>
+      <label>List of Reservations</label>
+      <%=list %>
+    </div>
+  </form>
+</body>
+</html>
