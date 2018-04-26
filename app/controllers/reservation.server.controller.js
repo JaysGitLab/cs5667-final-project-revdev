@@ -13,7 +13,7 @@ function getErrorMessage (err) {
 
 exports.renderCreateRes = function(req, res) {
   if (req.user) {
-    Event.find({}, '_id eventType', function(err, events) {
+    Event.find({}, '', function(err, events) {
       if (err) {
         res.redirect('/');
       } else {
@@ -37,6 +37,8 @@ exports.createRes = function(req, res) {
   } else {
     reservation.areas = req.body.areas;
   }
+  reservation.startTime = new Date(req.body.startTime);
+  reservation.endTime = new Date(req.body.endTime);
   
   reservation.save((err) => {
     if (err) {
