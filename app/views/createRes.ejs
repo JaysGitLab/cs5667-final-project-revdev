@@ -29,9 +29,9 @@
     </div>
     <div>
       <label>Purpose:</label>
-      <% for(var event in eventTypes) {%>
+      <% for(var i in eventTypes) {%>
         <select name="eventType">
-          <option value="<%= event._id %>"><%= event.eventType %></option>
+          <option value="<%= eventTypes[i]._id %>"><%= eventTypes[i].eventType %></option>
         </select>
       <% } %>
     </div>
