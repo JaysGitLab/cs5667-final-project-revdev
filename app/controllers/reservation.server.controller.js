@@ -10,7 +10,7 @@ function getErrorMessage (err) {
   }
 };
 
-exports.renderCreateRes = function(req, res, next) {
+exports.renderCreateRes = function(req, res) {
   if (req.user) {
     res.render('createRes', {
       title: 'Create a Reservation',
@@ -23,10 +23,9 @@ exports.renderCreateRes = function(req, res, next) {
   }
 };
 
-exports.createRes = function(req, res, next) {
+exports.createRes = function(req, res) {
   const reservation = new Reservation(req.body);
-  reservation.username = req.user.username;
-  if (Array.isArray(req.body.areas) {
+  if (Array.isArray(req.body.areas)) {
     reservation.areas = [req.body.areas];
   } else {
     reservation.areas = req.body.areas;
