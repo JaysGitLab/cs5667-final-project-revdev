@@ -1,4 +1,5 @@
 const Reservation = require('mongoose').model('Reservation');
+const Event = require('mongoose').model('Event');
 
 function getErrorMessage (err) {
   if (err.errors) {
@@ -12,12 +13,18 @@ function getErrorMessage (err) {
 
 exports.renderCreateRes = function(req, res) {
   if (req.user) {
-    res.render('createRes', {
-      title: 'Create a Reservation',
-      user: req.user,
-      //eventTypes: db.collection('eventType').find().toArray(), 
-      messages: req.flash('error')
-    });
+    Event.find({}, '_id, eventType', function(err, events) {
+      if (err) {
+        res.redirect('/');
+      } else {
+        res.render('createRes', {
+        title: 'Create a Reservation',
+        user: req.user,
+        eventTypes: events,
+        messages: req.flash('error')
+        });
+      }
+    })
   } else {
     return res.redirect('/');
   }
