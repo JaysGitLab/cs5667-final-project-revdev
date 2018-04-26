@@ -43,12 +43,7 @@ function dateValidator(value) {
   // `this` is the mongoose document
   // Calculate maximum end date based on eventType
   let maxEndDate = new Date(this.startTime.getTime() + (this.eventType.maxNumberOfDays * 24 * 60 * 60 * 1000));
-  //return (this.startTime <= value) && (value <= maxEndDate);
-  return (this.startTime <= value);
-  console.log('startTime: ' + this.startTime.getTime());
-  console.log('endTime: ' + this.endTime.getTime());
-  console.log('maxNumberOfDay converted: ' + this.eventType.maxNumberOfDays * 24 * 60 * 60 * 1000);
-  console.log('maxEndDate: ' + maxEndDate);
+  return (this.startTime <= value) && (value <= maxEndDate);
 }
 
 mongoose.model('Reservation', ReservationSchema);
