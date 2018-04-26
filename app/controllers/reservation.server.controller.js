@@ -40,7 +40,7 @@ exports.createRes = function(req, res) {
       req.flash('error', getErrorMessage(err));
       return res.redirect('/createRes');
     } else {
-      req.flash('info', 'Reservation added');
+      req.flash('info', 'Reservation requested');
       return res.redirect('/');
     }
   });
