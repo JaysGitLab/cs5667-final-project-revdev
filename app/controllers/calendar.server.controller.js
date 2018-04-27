@@ -11,7 +11,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = config.tokenPath;
 const CLIENT_SECRET = config.clientSecrete;
 
-exports.listEvents = function(date) {
+exports.createEvent = function(date) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
   fs.readFile(CLIENT_SECRET, (err, content) => {
@@ -23,14 +23,14 @@ exports.listEvents = function(date) {
   });
 };
 
-exports.createEvents = function (date) {
+exports.removeEvent = function (date) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
   fs.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
 
-    let event = {
+    /*let event = {
       'summary': 'Test Event 2',
       'location': 'Green Valley Parkway',
       'description': 'Birthday',
@@ -53,9 +53,9 @@ exports.createEvents = function (date) {
           {'method': 'popup', 'minutes': 10},
         ],
       },
-    };
+    };*/
 
-    authorize(JSON.parse(content), date, insertEvent);
+    authorize(JSON.parse(content), date, listEvents);
     //authorize(JSON.parse(content), insertEvent);
   });
 };
