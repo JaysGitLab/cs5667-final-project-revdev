@@ -55,10 +55,12 @@ exports.createEvents = function (date) {
       },
     };
 
-    authorize(JSON.parse(content), event, insertEvent);
+    authorize(JSON.parse(content), date, insertEvent);
     //authorize(JSON.parse(content), insertEvent);
   });
 };
+
+
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -119,34 +121,38 @@ function getAccessToken(oAuth2Client, callback) {
 
 /**
  * Lists the next 10 events on the user's primary calendar.
- * @date retrn
+ * @event retrn
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- * @param date
+ * @param event
  */
-function listEvents(auth, date) {
+function listEvents(auth, event) {
   const calendar = google.calendar({version: 'v3', auth});
-  console.log('Listing all events from a certain date');
-  console.log(date);
+  console.log('Listing all events from a certain event');
+  console.log(event);
   calendar.events.list({
     calendarId: 'primary',
-    timeMin: date,
-    maxResults: 10,
+    timeMin: event.start.dateTime, //'2018-04-20T11:00:00-04:00',
+    timeMax: event.end.dateTime, //'2018-04-21T20:00:00-04:00',//(new Date()).toISOString(),
+    maxResults: 1,
     singleEvents: true,
     orderBy: 'startTime',
   }, (err, {data}) => {
     if (err) return console.log('The API returned an error: ' + err);
     const events = data.items;
     if (events.length) {
-      console.log('Upcoming 10 events:');
-      events.map((event, i) => {
+      //console.log('Upcoming 10 events:');
+      console.log('Upcoming event:');
+      console.log(`${events[0].start.dateTime || events[0].start.date} - ${events[0].summary}`);
+      deleteEvent(auth, events[0]);
+      /*events.map((event, i) => {
         const start = event.start.dateTime || event.start.date;
         const end = event.end.dateTime || event.end.date;
         _events.push({start: start, end: end});
         console.log(`${start} - ${event.summary}`);
       });
-      console.log(_events);
+      console.log(_events);*/
     } else {
-      console.log('No upcoming events found.');
+      console.log('No upcoming events found to delete.');
     }
   });
 }
@@ -172,9 +178,24 @@ function insertEvent(auth, event) {
   });
 }
 
-function freeBusyStatus (auth, date) {
-  const startDate = date.start.dateTime; //new Date('20 April 2018 12:00').toISOString();
-  const endDate = date.end.dateTime; //new Date('22 April 2018 13:00').toISOString();
+function deleteEvent(auth, event) {
+  const calendar = google.calendar({version: 'v3', auth});
+  console.log('delete event -> ' + event.summary);
+  calendar.events.delete({
+    calendarId: 'primary',
+    eventId: event.id,
+  }, function(err, event) {
+    if (err) {
+      console.log('There was an error contacting the Calendar service: ' + err);
+      return;
+    }
+    console.log('Event deleted...');
+  });
+}
+
+function freeBusyStatus (auth, event) {
+  const startDate = event.start.dateTime; //new Date('20 April 2018 12:00').toISOString();
+  const endDate = event.end.dateTime; //new Date('22 April 2018 13:00').toISOString();
   // 2018-04-20T16:00:00.000Z
   var calID = 'primary';
 
@@ -195,11 +216,11 @@ function freeBusyStatus (auth, date) {
       var events = response.data.calendars['primary']['busy'].length;
       if (events === 0) {
         console.log('No upcoming events found.');
-        insertEvent(auth, date);
+        insertEvent(auth, event);
       } else {
         console.log('busy in here...');
-        console.log('Event ' + date.summary + ' could not be crated');
+        console.log('Event ' + event.summary + ' could not be crated');
       }
     }
-  })
+  });
 }
