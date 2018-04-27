@@ -22,8 +22,7 @@ const ReservationSchema = new Schema({
   },
   endTime: {
     type: Date,
-    required: 'End Date/Time required',
-    validate: [dateValidator, 'Start Date/Time must be less than End Date/Time and less than max days for event']
+    required: 'End Date/Time required'
   },
   areas: {
     type: [String],
@@ -37,17 +36,34 @@ const ReservationSchema = new Schema({
   comments: String
 });
 
-// Function that validates the startTime is before the end time
-// It also checks that the endTime date is within the max number of days of the event
-function dateValidator(endTime) {
-  // `this` is the mongoose document
-  // Calculate maximum end date based on eventType
+ReservationSchema.pre('save', function(next) {
   let maxNumberOfDays = 0;
   let startTime = this.startTime;
-  Event.findOne({_id: this.eventType}, 'maxNumberOfDays', function(err, eventT) {
-    let maxEndDate = new Date(startTime.getTime() + (eventT.maxNumberOfDays * 24 * 60 * 60 * 1000));
-    return (startTime <= endTime) && (endTime <= maxEndDate);
-  });
-}
+  let endTime = this.endTime;
+  if (this.eventType) {
+    Event.findOne({_id: this.eventType}, 'maxNumberOfDays', function(err, eventT) {
+      if (err) {
+        next(err);
+      } else {
+        if (eventT !== null) {
+          let maxEndDate = new Date(startTime.getTime() + (eventT.maxNumberOfDays * 24 * 60 * 60 * 1000));
+          if (!(startTime.getTime() <= endTime.getTime())) {
+            var error = new Error('Start Date/Time must be before End Date/Time');
+            next(error);
+          } else if (!(endTime.getTime() <= maxEndDate.getTime())) {
+            var error = new Error('Duration cannot be longer than maximum days for purpose');
+            next(error);
+          } else {
+            next();
+          }
+        } else {
+          next(new Error('Purpose does not exist'));
+        }
+      }
+    });
+  } else {
+    next(new Error('Purpose is required'));
+  }
+});
 
 mongoose.model('Reservation', ReservationSchema);

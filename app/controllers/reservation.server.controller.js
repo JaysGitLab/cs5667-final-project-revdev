@@ -7,7 +7,7 @@ function getErrorMessage (err) {
       if (err.errors[errName].message) return err.errors[errName].message;
     }
   } else {
-    return 'Unknown server error';
+    return err.message;
   }
 };
 

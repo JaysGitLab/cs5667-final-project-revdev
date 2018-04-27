@@ -17,7 +17,7 @@ describe('Reservation Model Unit Tests:', () => {
       username: 'beekmanpc@appstate.edu',
       startTime: new Date('April 18, 2018 01:00:00'),
       endTime: new Date('April 18, 2018 03:00:00'),
-      areas: 'Picnic shelter',
+      areas: ['Picnic shelter'],
       eventType: new Event({
         eventType: 'Birthday Party',
 	numberOfPeopleFrom: 0,
