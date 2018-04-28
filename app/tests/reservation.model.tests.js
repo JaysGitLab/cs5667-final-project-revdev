@@ -30,7 +30,6 @@ describe('Reservation Model Unit Tests:', () => {
       }),
       comments: 'test comments'
     });
-
     done();
   });
 

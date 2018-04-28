@@ -22,7 +22,8 @@ const ReservationSchema = new Schema({
   },
   endTime: {
     type: Date,
-    required: 'End Date/Time required'
+    required: 'End Date/Time required',
+    min: Date(this.startTime)
   },
   areas: {
     type: [String],
@@ -36,32 +37,14 @@ const ReservationSchema = new Schema({
   comments: String
 });
 
-ReservationSchema.pre('save', function(next) {
-  let maxNumberOfDays = 0;
-  let startTime = this.startTime;
-  let endTime = this.endTime;
-  if (this.eventType !== '') {
-    Event.findOne({_id: this.eventType}, 'maxNumberOfDays', function(err, eventT) {
-      if (err) {
-        next(err);
-      } else {
-        if (eventT !== null) {
-          let maxEndDate = new Date(startTime.getTime() + (eventT.maxNumberOfDays * 24 * 60 * 60 * 1000));
-          if (!(startTime.getTime() <= endTime.getTime())) {
-            next(new Error('Start Date/Time must be before End Date/Time'));
-          } else if (!(endTime.getTime() <= maxEndDate.getTime())) {
-            next(new Error('Duration cannot be longer than maximum days for purpose'));
-          } else {
-            next();
-          }
-        } else {
-          next(new Error('Purpose does not exist'));
-        }
-      }
-    });
-  } else {
-    next(new Error('Purpose is required'));
-  }
-});
+function endTimeMax(endTime) {
+  var startTime = this.startTime;
+  Event.findOne({_id: this.eventType}, function (err, event) {
+    if (err) {
+      return handleError(err);
+    }
+    return new Date(startTime.getTime() + (event.maxNumberOfDays * 24 * 60 * 60 * 1000));
+  });
+}
 
 mongoose.model('Reservation', ReservationSchema);
