@@ -40,7 +40,7 @@ ReservationSchema.pre('save', function(next) {
   let maxNumberOfDays = 0;
   let startTime = this.startTime;
   let endTime = this.endTime;
-  if (this.eventType) {
+  if (this.eventType !== '') {
     Event.findOne({_id: this.eventType}, 'maxNumberOfDays', function(err, eventT) {
       if (err) {
         next(err);
@@ -48,11 +48,9 @@ ReservationSchema.pre('save', function(next) {
         if (eventT !== null) {
           let maxEndDate = new Date(startTime.getTime() + (eventT.maxNumberOfDays * 24 * 60 * 60 * 1000));
           if (!(startTime.getTime() <= endTime.getTime())) {
-            var error = new Error('Start Date/Time must be before End Date/Time');
-            next(error);
+            next(new Error('Start Date/Time must be before End Date/Time'));
           } else if (!(endTime.getTime() <= maxEndDate.getTime())) {
-            var error = new Error('Duration cannot be longer than maximum days for purpose');
-            next(error);
+            next(new Error('Duration cannot be longer than maximum days for purpose'));
           } else {
             next();
           }
