@@ -7,27 +7,32 @@ const mongoose = require('mongoose');
 const Event = mongoose.model('Event');
 const Reservation = mongoose.model('Reservation');
 
-let reservation;
+let reservation, event;
 
 // Inform test tool that test is going to examine Event model
 describe('Reservation Model Unit Tests:', () => {
   // Create new reservation object
   beforeEach((done) => {
+    event = new Event({
+      eventType: 'Graduation Party',
+      numberOfPeopleFrom: 0,
+      numberOfPeopleTo: 30,
+      cost: 25,
+      deposit: 0,
+      reminderEmail: 3,
+      freeCancelation: 5,
+      maxNumberOfDays: 1
+    });
+
+    event.save(() => {
+    });
+
     reservation = new Reservation({
       username: 'beekmanpc@appstate.edu',
       startTime: new Date('April 18, 2018 01:00:00'),
       endTime: new Date('April 18, 2018 03:00:00'),
       areas: ['Picnic shelter'],
-      eventType: new Event({
-        eventType: 'Birthday Party',
-	numberOfPeopleFrom: 0,
-	numberOfPeopleTo: 30,
-	cost: 25,
-	deposit: 0,
-	reminderEmail: 3,
-	freeCancelation: 5,
-	maxNumberOfDays: 1
-      }),
+      eventType: event, 
       comments: 'test comments'
     });
     done();

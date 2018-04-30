@@ -23,7 +23,7 @@ const ReservationSchema = new Schema({
   endTime: {
     type: Date,
     required: 'End Date/Time required',
-    min: Date(this.startTime)
+    validate: [dateValidator, 'End Date/Time must be valid']
   },
   areas: {
     type: [String],
@@ -37,14 +37,22 @@ const ReservationSchema = new Schema({
   comments: String
 });
 
-function endTimeMax(endTime) {
+function dateValidator(endTime) {
+  if (this.startTime === null || endTime === null || this.eventType === null || this.startTime > endTime) {
+    return false;
+  }
   var startTime = this.startTime;
-  Event.findOne({_id: this.eventType}, function (err, event) {
+  var maxEndDate = new Date();
+  Event.findOne({_id: this.eventType._id}, function (err, event) {
     if (err) {
       return handleError(err);
     }
-    return new Date(startTime.getTime() + (event.maxNumberOfDays * 24 * 60 * 60 * 1000));
+    if (event === null) {
+      return false;
+    }
+    maxEndDate = new Date(startTime.getTime() + (event.maxNumberOfDays * 24 * 60 * 60 * 1000));
   });
+  return endTime.getTime() <= maxEndDate.getTime();
 }
 
 mongoose.model('Reservation', ReservationSchema);
