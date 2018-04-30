@@ -7,14 +7,14 @@ function getErrorMessage(err) {
     switch (err.code) {
         case 11000:
         case 11001: 
-          message = 'Email already exists';
+          message = 'Event already exists';
           break;
         default: 
           message = 'Something went wrong';
      }
    } else {
      for (var errName in err.errors) {
-       if (err.errors[errName].message){
+       if (err.errors[errName].message) {
          message = err.errors[errName].message;
        }
      }
@@ -22,29 +22,28 @@ function getErrorMessage(err) {
    return message;
 };
 
-exports.create = function(req, res){
-  console.log('Event create method is called');
+exports.createEvent = function(req, res) {
     const event = new Event(req.body);
     event.creator = req.user;
     event.save((err) => {
-        if (err){
-            return res.status(400).send({
-                message: getErrorMessage(err)});
-        }else{
-            res.json(event);
+        if (err) {
+            req.flash('error', getErrorMessage(err));
+			return res.redirect('/createEvent');
+        } else {
+            req.flash('info', 'Event Created');
+			return res.redirect('/');
         }
     });
 };
 
-exports.list = function(req, res) {
-  console.log('Event List method is called');
+exports.listEvents = function(req, res) {
     Event.find().sort('-created').populate('creator', 'firstName lastName fullName').exec((err, event) => {
         if (err) {
-            return res.status(400).send({
-                message: getErrorMessage(err)
-            });
+            req.flash('error', getErrorMessage(err));
+			return res.redirect('/createEvent');
         } else {
-            res.status(200).json(event);
+            req.flash('info', 'Event lsit requested');
+			return res.redirect('/');
         }
     });
 };
@@ -54,53 +53,53 @@ exports.eventByID = function(req, res, next, id) {
         if (err) 
             return next(err);    
             if (!event) 
-                return next(new Error('Failed to load article ' + id));
+                return next(new Error('Failed to load event ' + id));
             req.event = event;    
             next();  
     }); 
 };
 
 exports.read = function(req, res) {  
-    res.status(200).json(req.event); 
+    req.flash('info', 'Event Read');
+	return res.redirect('/'); 
 };
 
-exports.update = function(req, res) {  
+exports.updateEvents = function(req, res) {  
     const event = req.event;
     event.title = req.body.title;
     event.content = req.body.content;
     event.save((err) => {    
         if (err) {      
-            return res.status(400).send({        
-                message: getErrorMessage(err)      
-            });    
+            req.flash('error', getErrorMessage(err));
+			return res.redirect('/createEvent');    
         } else {      
-            res.status(200).json(event);    
+            req.flash('info', 'Event updated');
+			return res.redirect('/');    
         }  
     }); 
 };
 
-exports.delete = function(req, res) { 
+exports.deleteEvent = function(req, res) { 
     const event = req.event;
     event.remove((err) => {
         if (err) {
-            return res.status(400).send({
-               message: getErrorMessage(err)
-            });
+            req.flash('error', getErrorMessage(err));
+			return res.redirect('/createEvent');
         } else {
-            res.json(event);
+            req.flash('info', 'Event deleted');
+			return res.redirect('/');
         }
     });
 };
 
 exports.hasAuthorization = function(req, res, next) {    
-    if (req.event.creator.id !== req.user.id) {        
-        return res.status(403).send({            
-            message: 'User is not authorized'});    
-        }
+    if (req.event.creator.id !== req.user.id) {                   
+        req.flash('error', 'User is not authorized');    
+        return res.redirect('/createEvent');
     next(); 
 };
 
-exports.render = function(req, res){
+exports.renderEvent = function(req, res) {
 	if (req.user) {
 		if (err) {
 			res.redirect('/');
