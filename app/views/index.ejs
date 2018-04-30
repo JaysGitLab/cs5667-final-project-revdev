@@ -5,18 +5,21 @@
         <title><%= title %></title>
     </head>
     <body>
+      <% for(var i in messages) { %>
+        <div class="flash"><%=messages[i] %></div>
+      <% } %>
       <!-- Load the static image file  -->
       <img src="img/GvcpLogo.png" alt="Logo">
       <h2><%= title%></h2>
       <h3><%= headline%></h3>
       <% if (userFullName) { %>
         <h4>Hello <%=userFullName %></h4>
+        <a href="/updateUser">Update profile</a>
+        <a href="/createRes">Make a reservation</a>
         <a href="/signout">Sign out</a>
       <% } else { %>
         <a href="/signup">Sign up</a>
         <a href="/signin">Sign in</a>
       <% } %>
-      <a href="/reservation">Make a reservation</a>
-    <p>Test: <%= test %></p>
     </body>
 </html>
