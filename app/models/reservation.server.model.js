@@ -23,7 +23,7 @@ const ReservationSchema = new Schema({
   endTime: {
     type: Date,
     required: 'End Date/Time required',
-    validate: [dateValidator, 'Start Date/Time must be less than End Date/Time and less than max days for event']
+    validate: [dateValidator, 'End Date/Time must be valid']
   },
   areas: {
     type: [String],
@@ -37,17 +37,22 @@ const ReservationSchema = new Schema({
   comments: String
 });
 
-// Function that validates the startTime is before the end time
-// It also checks that the endTime date is within the max number of days of the event
 function dateValidator(endTime) {
-  // `this` is the mongoose document
-  // Calculate maximum end date based on eventType
-  let maxNumberOfDays = 0;
-  let startTime = this.startTime;
-  Event.findOne({_id: this.eventType}, 'maxNumberOfDays', function(err, eventT) {
-    let maxEndDate = new Date(startTime.getTime() + (eventT.maxNumberOfDays * 24 * 60 * 60 * 1000));
-    return (startTime <= endTime) && (endTime <= maxEndDate);
+  if (this.startTime === null || endTime === null || this.eventType === null || this.startTime > endTime) {
+    return false;
+  }
+  var startTime = this.startTime;
+  var maxEndDate = new Date();
+  Event.findOne({_id: this.eventType._id}, function (err, event) {
+    if (err) {
+      return handleError(err);
+    }
+    if (event === null) {
+      return false;
+    }
+    maxEndDate = new Date(startTime.getTime() + (event.maxNumberOfDays * 24 * 60 * 60 * 1000));
   });
+  return endTime.getTime() <= maxEndDate.getTime();
 }
 
 mongoose.model('Reservation', ReservationSchema);
