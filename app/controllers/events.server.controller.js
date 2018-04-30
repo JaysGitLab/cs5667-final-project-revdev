@@ -101,7 +101,16 @@ exports.hasAuthorization = function(req, res, next) {
 };
 
 exports.render = function(req, res){
-    res.render('eventCreate',{
-        title: 'Create an Event'
-    });
+	if (req.user) {
+		if (err) {
+			res.redirect('/');
+		}
+		res.render('eventCreate',{
+			title: 'Create an Event',
+			user: req.user,
+			messages: req.flash('error') || req.flash('info')
+		});
+	} else {
+		return res.redirect('/');
+	}
 }; 

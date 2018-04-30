@@ -35,14 +35,70 @@ describe('Event Controller Unit Tests:', () => {
       describe('Test to create.', () => {
           it('Should be able to create a new event.', () => {
               eventName.create((err) => {
+                  should.not.exist(err);
+              });
+          });
+		  it('Test should not save with people from less than to.', () => {
+			eventName.numberOfPeopleTo = 6;
+			eventName.numberOfPeopleFrom = 5;
+			eventName.create((err) => {
                   should.exist(err);
               });
-          });    
+		  });
+		  it('Test should not save with cost less than 0.', () => {
+			eventName.cost = -1;
+			eventName.create((err) => {
+                  should.exist(err);
+              });
+		  });
+		  it('Test should not save with deposit less than 0.', () => {
+			eventName.deposit = -1;
+			eventName.create((err) => {
+                  should.exist(err);
+              });
+		  });
+		  it('Test should not save with deposit greater than 100.', () => {
+			eventName.deposit = 101;
+			eventName.create((err) => {
+                  should.exist(err);
+              });
+		  });
+		  it('Test should not save with reminder email less than 0.', () => {
+			eventName.reminderEmail = -1;
+			eventName.create((err) => {
+                  should.exist(err);
+              });
+		  });
+		  it('Test should not save with free cancelation less than 0.', () => {
+			eventName.freeCancelation = -1;
+			eventName.create((err) => {
+                  should.exist(err);
+              });
+		  });
+		  it('Test should not save with the max days less than 1.', () => {
+			eventName.freeCancelation = 0;
+			eventName.create((err) => {
+                  should.exist(err);
+              });
+		  });
+		  it('Test should save with only an event type.', () => {
+			eventType = 'Birthday';
+            numberOfPeopleFrom = null;
+            numberOfPeopleTo = null;
+            cost = null;
+            deposit = null;
+            reminderEmail = null;
+            freeCancelation = null;
+            maxNumberOfDays = null;
+			eventName.create((err) => {
+                  should.not.exist(err);
+              });
+		  });
       });
       afterEach((done) => {
-          Event.remove(() => {
-              done();
-          });
+		  User.remove(() => {});
+          Event.remove(() => {});
+		  done();
       });
 });
 
