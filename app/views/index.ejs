@@ -11,12 +11,13 @@
       <h3><%= headline%></h3>
       <% if (userFullName) { %>
         <h4>Hello <%=userFullName %></h4>
+        <% if (isAdmin) { %>
+          <a href="/createEvent">Create an Event</a>
+        <% } %>
         <a href="/signout">Sign out</a>
       <% } else { %>
         <a href="/signup">Sign up</a>
         <a href="/signin">Sign in</a>
       <% } %>
-      <a href="/reservation">Make a reservation</a>
-	  <a href="/createEvent">Create an Event</a>
     </body>
 </html>
