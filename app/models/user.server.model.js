@@ -44,6 +44,11 @@ UserSchema.virtual('fullName').get(function() {
   this.lastName = splitName[1] || '';
 });
 
+// Virtual attribute for admin
+UserSchema.virtual('isAdmin').get(function() {
+  return this.admin;
+});
+
 // Pre-save middleware to handle hashing of user passwords
 UserSchema.pre('save', function(next) {
   if (this.password) {
