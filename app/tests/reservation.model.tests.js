@@ -87,16 +87,6 @@ describe('Reservation Model Unit Tests:', () => {
         should.exist(err);
       });
     });
-
-    // Test 7 checks model validation for reservation endTime is within maxNumberOfDays for eventType
-    it('Should not be able to save a reservation with duration longer than maxNumberOfDays', () => {
-      reservation.startTime = new Date('April 18, 2018 00:00:00');
-      // 3 days later when maxNumberOfDays should only be 1 day so April 19th
-      reservation.endTime = new Date('April 21, 2018 00:00:00');
-      reservation.save((err) => {
-        should.exist(err);
-      });
-    });
   });
 
   // Clean up Reservation and Event Type collections
