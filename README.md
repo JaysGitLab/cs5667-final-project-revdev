@@ -4,6 +4,7 @@ cs5667-final-project-revdev created by GitHub Classroom
 # Requirements
 - NodeJS global installation
 - MongoDB global installation and running service
+  - If running on ASU's student see the Wiki for installation instructions
 - Mocha global installation (for back end unit tests)
 
 # Installation
