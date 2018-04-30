@@ -8,11 +8,11 @@ var event = {
   'location': 'Green Valley Parkway',
   'description': 'Birthday',
   'start': {
-    'dateTime': '2017-04-25T17:00:00-06:00',
+    'dateTime': '2018-04-25T17:00:00-04:00',
     'timeZone': 'America/New_York',
   },
   'end': {
-    'dateTime': '2017-04-25T19:00:00-06:00',
+    'dateTime': '2018-04-25T19:00:00-04:00',
     'timeZone': 'America/New_York',
   },
   'attendees': [
@@ -41,16 +41,22 @@ describe('Calendar Unit Tests:', () => {
   describe('Testing the calendar insert event method', () => {
     // Test create an event on a free date
     it('Should be able to save without problems', () => {
-      calendar.createEvent((event) => {
+      consol.log('Testing ' + event);
+      /*calendar.createEvent((event) => {
         sould.not.exist(err)
-      });
+      });*/
+      calendar.createEvent(event);
     });
 
     // Test 2 checks model validation for event with no eventType
     it('Should not be able to save an event at the same time', () => {
-        event.save((err) => {
-            should.exist(err);
-        });
+      calendar.createEvent((event) => {
+        consol.log('Testing2 ' + event);
+        /*event.save((err) => {
+          should.exist(err);
+        });*/
+        calendar.createEvent(event);
+      });
     });
 
     /*// Test 3 checks model validation for duplicated eventType
@@ -79,8 +85,10 @@ describe('Calendar Unit Tests:', () => {
 
   // Clean up Event collection
   afterEach((done) => {
-    calendar.removeEvent((event) => {
+    /* calendar.removeEvent((event) => {
       done();
-    });
+    });*/
+    // calendar.removeEvent(event);
+    done();
   });
 });

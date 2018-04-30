@@ -14,6 +14,7 @@ const CLIENT_SECRET = config.clientSecrete;
 exports.createEvent = function(date) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
+  console.log('event: ' + date);
   fs.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
