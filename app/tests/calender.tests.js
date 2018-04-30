@@ -38,23 +38,22 @@ describe('Calendar Unit Tests:', () => {
   });
 
   // Testing insert Event method
-  describe('Testing the insert event method', () => {
+  describe('Testing the calendar insert event method', () => {
     // Test create an event on a free date
     it('Should be able to save without problems', () => {
       calendar.createEvent((event) => {
-        sould.exist(err)
+        sould.not.exist(err)
       });
     });
 
-    /*// Test 2 checks model validation for event with no eventType
-    it('Should not be able to save an event without an eventType', () => {
-        event.eventType = '';
+    // Test 2 checks model validation for event with no eventType
+    it('Should not be able to save an event at the same time', () => {
         event.save((err) => {
             should.exist(err);
         });
     });
 
-    // Test 3 checks model validation for duplicated eventType
+    /*// Test 3 checks model validation for duplicated eventType
     it('Should not be able to save an event with duplicated eventType', () => {
         eventB = new Event({
             eventType: 'Birthday Party',
