@@ -23,7 +23,7 @@ const ReservationSchema = new Schema({
   endTime: {
     type: Date,
     required: 'End Date/Time required',
-    validate: [dateValidator, 'End Date/Time must be valid']
+    validate: [dateValidator, 'End Date/Time must be after Start Date/Time and within max number of days for event']
   },
   areas: {
     type: [String],
