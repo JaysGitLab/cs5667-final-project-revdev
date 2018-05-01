@@ -67,9 +67,9 @@ exports.renderList = function(req, res) {
     } else { //res.status(200).json(listReservation),
       var stringRes = []
       for (var i=0; i<listReservation.length;i++) {
-
-        stringRes.push(JSON.stringify(listReservation[i]))
-      }
+        jsonString = JSON.stringify(listReservation[i]);
+        stringRes.push(jsonString.split("\",\""));
+      } 
       console.log("Listing reservations");
       res.render('listRes', {
       title: 'View all Reservations',
