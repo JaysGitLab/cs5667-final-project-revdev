@@ -62,15 +62,13 @@ exports.list = function(req, res) {
 exports.renderList = function(req, res) {
   Reservation.find().exec((err, listReservation) => {
     if (err) {
-      //return res.redirect('/');
-      console.log("error where you know!");
-    } else { //res.status(200).json(listReservation),
+      return res.redirect('/');
+    } else {
       var stringRes = []
       for (var i=0; i<listReservation.length;i++) {
         jsonString = JSON.stringify(listReservation[i]);
         stringRes.push(jsonString.split("\",\""));
       } 
-      console.log("Listing reservations");
       res.render('listRes', {
       title: 'View all Reservations',
       list: stringRes,
