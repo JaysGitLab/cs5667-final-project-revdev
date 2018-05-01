@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      <%=title %>
+  </title>
+</head>
+<body>
+  <% for(var i in messages) { %>
+    <div class="flash"><%=messages[i] %></div>
+  <% } %>
+  <form action="/createRes" method="post">
+    <div>
+      <label>Email:</label>
+      <input type="text" name="username" value="<%=user.username %>" />
+    </div>
+    <div>
+      <label>Start Date/Time:</label>
+      <input type="datetime-local" name="startTime" />
+    </div>
+    <div>
+      <label>End Date/Time:</label>
+      <input type="datetime-local" name="endTime" />
+    </div>
+    <div>
+      <label>Area(s) Needed:</label><br />
+      <input type="checkbox" name="areas[]" value="Picnic shelter">Picnic shelter<br />
+      <input type="checkbox" name="areas[]" value="Lower field">Lower field<br />
+    </div>
+    <div>
+      <label>Purpose:</label>
+      <% for(var i in eventTypes) {%>
+        <select name="eventType">
+          <option value="<%= eventTypes[i]._id %>"><%= eventTypes[i].eventType %></option>
+        </select>
+      <% } %>
+        <ul><% for(var i in eventTypes) {%>
+          <li><%= eventTypes[i].eventType %>: <%= eventTypes[i].numberOfPeopleFrom %>-<%= eventTypes[i].numberOfPeopleTo %> people, cost $<%= eventTypes[i].cost %>, deposit $<%= eventTypes[i].deposit %>, free cancelation within <%= eventTypes[i].freeCancelation %> day(s), <%= eventTypes[i].maxNumberOfDays %> day(s) maximum</li>
+        </ul>
+      <% } %>
+    </div>
+    <div>
+      <label>Other Relevant Information:</label><br />
+      <textarea name="comments"></textarea>
+    </div>
+    <div>
+      <input type="submit" value="Save" />
+    </div>
+  </form>
+</body>
+</html>

@@ -7,31 +7,34 @@ const mongoose = require('mongoose');
 const Event = mongoose.model('Event');
 const Reservation = mongoose.model('Reservation');
 
-let reservation;
+let reservation, event;
 
 // Inform test tool that test is going to examine Event model
 describe('Reservation Model Unit Tests:', () => {
-  // Create new event object
+  // Create new reservation object
   beforeEach((done) => {
+    event = new Event({
+      eventType: 'Graduation Party',
+      numberOfPeopleFrom: 0,
+      numberOfPeopleTo: 30,
+      cost: 25,
+      deposit: 0,
+      reminderEmail: 3,
+      freeCancelation: 5,
+      maxNumberOfDays: 1
+    });
+
+    event.save(() => {
+    });
+
     reservation = new Reservation({
       username: 'beekmanpc@appstate.edu',
       startTime: new Date('April 18, 2018 01:00:00'),
       endTime: new Date('April 18, 2018 03:00:00'),
-      areas: 'Picnic shelter',
-      eventType: new Event({
-        eventType: 'Birthday Party',
-	numberOfPeopleFrom: 0,
-	numberOfPeopleTo: 30,
-	cost: 25,
-	deposit: 0,
-	reminderEmail: 3,
-	freeCancelation: 5,
-	maxNumberOfDays: 1
-      }),
-      purpose: 'test purpose',
+      areas: ['Picnic shelter'],
+      eventType: event, 
       comments: 'test comments'
     });
-
     done();
   });
 
@@ -53,7 +56,7 @@ describe('Reservation Model Unit Tests:', () => {
     });
 
     // Test 3 checks model validation for reservation with no startTime
-    it('Should not be able to save a reservation without an startTime', () => {
+    it('Should not be able to save a reservation without a startTime', () => {
       reservation.startTime = '';
       reservation.save((err) => {
         should.exist(err);
@@ -80,26 +83,6 @@ describe('Reservation Model Unit Tests:', () => {
     it('Should not be able to save a reservation with the endTime before startTime', () => {
       reservation.startTime = new Date('April 18, 2018 00:00:00');
       reservation.endTime = new Date('April 10, 2018 00:00:00');
-      reservation.save((err) => {
-        should.exist(err);
-      });
-    });
-
-    // Test 7 checks model validation for reservation endTime is within maxNumberOfDays for eventType
-    it('Should not be able to save a reservation with duration longer than maxNumberOfDays', () => {
-      reservation.eventType = new Event({
-        eventType: 'Birthday Party',
-        numberOfPeopleFrom: 0,
-        numberOfPeopleTo: 30,
-        cost: 25,
-        deposit: 0,
-        reminderEmail: 3,
-        freeCancelation: 5,
-        maxNumberOfDays: 1
-      });
-      reservation.startTime = new Date('April 18, 2018 00:00:00');
-      // 3 days later when maxNumberOfDays should only be 1 day so April 19th
-      reservation.endTime = new Date('April 21, 2018 00:00:00');
       reservation.save((err) => {
         should.exist(err);
       });

@@ -3,6 +3,7 @@
  */
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Event = require('mongoose').model('Event');
 
 // https://stackoverflow.com/questions/18001478/referencing-another-schema-in-mongoose
 const ReservationSchema = new Schema({
@@ -22,10 +23,10 @@ const ReservationSchema = new Schema({
   endTime: {
     type: Date,
     required: 'End Date/Time required',
-    validate: [dateValidator, 'Start Date/Time must be less than End Date/Time and less than max days for event']
+    validate: [dateValidator, 'End Date/Time must be after Start Date/Time']
   },
   areas: {
-    type: String,
+    type: [String],
     enum: ['Picnic shelter', 'Lower field']
   },
   eventType: {
@@ -33,17 +34,11 @@ const ReservationSchema = new Schema({
     required: 'Event Type required',
     ref: 'Event'
   },
-  purpose: String,
   comments: String
 });
 
-// Function that validates the startTime is before the end time
-// It also checks that the endTime date is within the max number of days of the event
-function dateValidator(value) {
-  // Calculate maximum end date based on eventType
-  // `this` is the mongoose document
-  let maxEndDate = new Date(this.startTime.getTime() + (this.eventType.maxNumberOfDays * 24 * 60 * 60 * 1000));
-  return (this.startTime <= value) && (value <= maxEndDate);
+function dateValidator(endTime) {
+  return this.startTime <= endTime;
 }
 
 mongoose.model('Reservation', ReservationSchema);
