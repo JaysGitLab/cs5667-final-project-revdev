@@ -1,5 +1,6 @@
 const Reservation = require('mongoose').model('Reservation');
 const Event = require('mongoose').model('Event');
+const JSON = require('circular-json');
 
 function getErrorMessage (err) {
   if (err.errors) {
@@ -61,11 +62,13 @@ exports.list = function(req, res) {
 exports.renderList = function(req, res) {
   Reservation.find().exec((err, listReservation) => {
     if (err) {
-      return res.redirect('/');
-    } else {
+      //return res.redirect('/');
+      console.log("error where you know!");
+    } else { //res.status(200).json(listReservation),
+      console.log("Listing reservations");
       res.render('listRes', {
       title: 'View all Reservations',
-      list: res.status(200).json(listReservation),
+      list: JSON.stringify(listReservation),
       messages: req.flash('error')
       });
     }
