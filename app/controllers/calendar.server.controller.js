@@ -11,15 +11,15 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = config.tokenPath;
 const CLIENT_SECRET = config.clientSecrete;
 
-exports.createEvent = function(date) {
+exports.createEvent = function(req, reservation) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
-  console.log('event: ' + date);
+  console.log('event: ' + req);
   fs.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
-
-    authorize(JSON.parse(content), date, freeBusyStatus);
+    var event = {req, reservation};
+    authorize(JSON.parse(content), event, freeBusyStatus);
     //authorize(JSON.parse(content), insertEvent);
   });
 };
@@ -195,8 +195,9 @@ function deleteEvent(auth, event) {
 }
 
 function freeBusyStatus (auth, event) {
-  const startDate = event.start.dateTime; //new Date('20 April 2018 12:00').toISOString();
-  const endDate = event.end.dateTime; //new Date('22 April 2018 13:00').toISOString();
+  // event.event
+  const startDate = new Date(event.req.body.startTime).toISOString(); //new Date('20 April 2018 12:00').toISOString();
+  const endDate = new Date(event.req.body.endTime).toISOString(); //new Date('22 April 2018 13:00').toISOString();
   // 2018-04-20T16:00:00.000Z
   var calID = 'primary';
 
@@ -217,11 +218,53 @@ function freeBusyStatus (auth, event) {
       var events = response.data.calendars['primary']['busy'].length;
       if (events === 0) {
         console.log('No upcoming events found.');
-        insertEvent(auth, event);
+        let e = {
+          'summary': event.req.body.eventType,
+          'location': event.req.body.areas[0],
+          'description': event.req.body.username,
+          'start': {
+            'dateTime': startDate,
+            'timeZone': 'America/New_York',
+          },
+          'end': {
+            'dateTime': endDate,
+            'timeZone': 'America/New_York',
+          },
+          'attendees': [
+            {'email': event.req.body.username},
+          ],
+          'reminders': {
+            'useDefault': false,
+            'overrides': [
+              {'method': 'email', 'minutes': 24 * 60},
+              {'method': 'popup', 'minutes': 10},
+            ],
+          },
+        };
+        event.reservation.save((err) => {
+          if (err) {
+            event.req.flash('error', getErrorMessage(err));
+            return;
+          } else {
+            insertEvent(auth, e);
+            return;
+          }
+        });
       } else {
         console.log('busy in here...');
         console.log('Event ' + event.summary + ' could not be crated');
+        event.req.flash('error', getErrorMessage(err));
       }
     }
   });
+}
+
+function getErrorMessage(err) {
+  if (err.errors) {
+    for (let errName in err.errors) {
+      if (err.errors[errName].message) return err.errors[errName].message;
+    }
+  } else {
+    return err.message;
+  }
 }

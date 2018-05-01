@@ -1,4 +1,4 @@
-const calendarAPI = require('./calendar.server.controller');
+//const calendarAPI = require('./calendar.server.controller');
 
 // Create a new 'render' controller method
 exports.render = function (req, res) {
@@ -29,7 +29,11 @@ exports.render = function (req, res) {
     },
   };
   console.log('data: ' + event);
-  calendarAPI.createEvent(event);
+  /*calendarAPI.createEvent(event, err => {
+    console.log('API Call: ' + err);
+  });*/
+  // calendarAPI.test(event)
+  // console.log('API Call: ' + calendarAPI.test(event));
 
   res.render('index', {
     title: 'Welcome to Green Valley Community Park',
