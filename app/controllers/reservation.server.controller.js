@@ -65,10 +65,15 @@ exports.renderList = function(req, res) {
       //return res.redirect('/');
       console.log("error where you know!");
     } else { //res.status(200).json(listReservation),
+      var stringRes = []
+      for (var i=0; i<listReservation.length;i++) {
+
+        stringRes.push(JSON.stringify(listReservation[i]))
+      }
       console.log("Listing reservations");
       res.render('listRes', {
       title: 'View all Reservations',
-      list: JSON.stringify(listReservation),
+      list: stringRes,
       messages: req.flash('error')
       });
     }
