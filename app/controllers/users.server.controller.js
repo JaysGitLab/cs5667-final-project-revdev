@@ -29,7 +29,7 @@ exports.renderSignin = function(req, res, next) {
   if (!req.user) {
     res.render('signin', {
       title: 'Sign In Form',
-      messages: req.flash('error') || req.flash('info')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -40,7 +40,7 @@ exports.renderSignup = function(req, res, next) {
   if (!req.user) {
     res.render('signup', {
       title: 'Sign Up Form',
-      messages: req.flash('error')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -52,7 +52,7 @@ exports.renderUpdate = function(req, res, next) {
     res.render('updateUser', {
       title: 'Update Profile Form',
       user: req.user,
-      messages: req.flash('error')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');

@@ -18,10 +18,10 @@ exports.renderCreateRes = function(req, res) {
         res.redirect('/');
       } else {
         res.render('createRes', {
-        title: 'Create a Reservation',
-        user: req.user,
-        eventTypes: events,
-        messages: req.flash('error') || req.flash('info')
+          title: 'Create a Reservation',
+          user: req.user,
+          eventTypes: events,
+          messages: req.flash('error').concat(req.flash('info'))
         });
       }
     })
@@ -39,9 +39,8 @@ exports.createRes = function(req, res) {
     if (err) {
       req.flash('error', getErrorMessage(err));
       return res.redirect('/createRes');
-    } else {
-      req.flash('info', 'Reservation requested');
-      return res.redirect('/');
     }
+    req.flash('error', 'Reservation requested');
+    return res.redirect('/');
   });
 };
