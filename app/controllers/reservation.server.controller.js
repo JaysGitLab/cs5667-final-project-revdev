@@ -42,7 +42,7 @@ exports.getEventMaxDays = function(req, res, next) {
   });
 };
 
-exports.createRes = function(req, res) {
+exports.createRes = function(err, req, res, next) {
   const reservation = new Reservation(req.body);
   reservation.startTime = new Date(req.body.startTime);
   reservation.endTime = new Date(req.body.endTime);
@@ -50,16 +50,28 @@ exports.createRes = function(req, res) {
   let maxEndDate = new Date(reservation.startTime.getTime() + (maxDays * 24 * 60 * 60 * 1000));
   if (reservation.endTime.getTime() > maxEndDate.getTime()) {
     req.flash('error', 'Event duration cannot be longer than max number of days for event type');
-    return res.redirect('/createRes');
+    // return res.redirect('/createRes');
+    next();
   }
 
   reservation.save((err) => {
     if (err) {
       req.flash('error', getErrorMessage(err));
-      return res.redirect('/createRes');
+      // return res.redirect('/createRes');
+      next();
     } else {
       req.flash('info', 'Reservation requested');
-      return res.redirect('/');
+      // return res.redirect('/');
+      next();
     }
   });
+};
+
+
+exports.redirectReservationPage = function(req, res){
+  if(req){
+    return res.redirect('/createRes');
+  } else {
+    return res.redirect('/');
+  }
 };

@@ -11,7 +11,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = config.tokenPath;
 const CLIENT_SECRET = config.clientSecrete;
 
-exports.createEvent = function(req, reservation) {
+exports.createEvent = function(err, req, res, next) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
   console.log('event: ' + req);
@@ -45,10 +45,76 @@ exports.createEvent = function(req, reservation) {
   var token = fs.readFileSync(TOKEN_PATH, 'utf8');
   console.log('Google Calendar authentication was successful');
   oAuth2Client.setCredentials(JSON.parse(token));
-  insertEvent(oAuth2Client, event);
-
-  return 2;
+  //insertEvent(oAuth2Client, event);
+  res.token = oAuth2Client;
+  res.event = event;
+  next();
 };
+
+exports.freeBusyStatus  = function(err, res, req, next) {
+  // event.event
+  const startDate = new Date(event.req.body.startTime).toISOString(); //new Date('20 April 2018 12:00').toISOString();
+  const endDate = new Date(event.req.body.endTime).toISOString(); //new Date('22 April 2018 13:00').toISOString();
+  // 2018-04-20T16:00:00.000Z
+  var calID = 'primary';
+
+  const check = {
+    resource: {
+      auth: auth,
+      timeMin: startDate,
+      timeMax: endDate,
+      items: [{id: calID}]
+    }
+  };
+  const calendar = google.calendar({version: 'v3', auth});
+
+  calendar.freebusy.query (check, function (err, response) {
+    if (err) {
+      console.log ('error: ' + err)
+    } else {
+      var events = response.data.calendars['primary']['busy'].length;
+      if (events === 0) {
+        console.log('No upcoming events found.');
+        let e = {
+          'summary': event.req.body.eventType,
+          'location': event.req.body.areas[0],
+          'description': event.req.body.username,
+          'start': {
+            'dateTime': startDate,
+            'timeZone': 'America/New_York',
+          },
+          'end': {
+            'dateTime': endDate,
+            'timeZone': 'America/New_York',
+          },
+          'attendees': [
+            {'email': event.req.body.username},
+          ],
+          'reminders': {
+            'useDefault': false,
+            'overrides': [
+              {'method': 'email', 'minutes': 24 * 60},
+              {'method': 'popup', 'minutes': 10},
+            ],
+          },
+        };
+        event.reservation.save((err) => {
+          if (err) {
+            event.req.flash('error', getErrorMessage(err));
+            return;
+          } else {
+            insertEvent(auth, e);
+            return;
+          }
+        });
+      } else {
+        console.log('busy in here...');
+        console.log('Event ' + event.summary + ' could not be crated');
+        event.req.flash('error', getErrorMessage(err));
+      }
+    }
+  });
+}
 
 exports.removeEvent = function (date) {
   // Load client secrets from a local file.
