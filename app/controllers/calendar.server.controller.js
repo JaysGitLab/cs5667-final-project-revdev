@@ -15,13 +15,39 @@ exports.createEvent = function(req, reservation) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
   console.log('event: ' + req);
-  fs.readFile(CLIENT_SECRET, (err, content) => {
+  /*s.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
     var event = {req, reservation};
     authorize(JSON.parse(content), event, freeBusyStatus);
     //authorize(JSON.parse(content), insertEvent);
-  });
+  });*/
+  var event = {req, reservation};
+  var secret = fs.readFileSync(CLIENT_SECRET, 'utf8');
+
+  var credentials = JSON.parse(secret);
+  console.log('Test ' + credentials.installed);
+  const {client_secret, client_id, redirect_uris} = credentials.installed;
+  const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris[0]);
+
+  // Check if we have previously stored a token.
+  /*fs.readFile(TOKEN_PATH, (err, token) => {
+    if (err) {
+      console.log('Wrong Access Token for Calendar API -> ' + err);
+      // getAccessToken(oAuth2Client, callback);
+      return err;
+    }
+    console.log('Google Calendar authentication was successful');
+    oAuth2Client.setCredentials(JSON.parse(token));
+    callback(oAuth2Client, data);
+
+  });*/
+  var token = fs.readFileSync(TOKEN_PATH, 'utf8');
+  console.log('Google Calendar authentication was successful');
+  oAuth2Client.setCredentials(JSON.parse(token));
+  insertEvent(oAuth2Client, event);
+
+  return 2;
 };
 
 exports.removeEvent = function (date) {
@@ -166,17 +192,31 @@ function listEvents(auth, event) {
 function insertEvent(auth, event) {
   const calendar = google.calendar({version: 'v3', auth});
   console.log('create event -> ' + event.summary);
-  calendar.events.insert({
+  /*calendar.events.insert({
     auth: auth,
     calendarId: 'primary',
     resource: event,
   }, function(err, event) {
     if (err) {
       console.log('There was an error contacting the Calendar service: ' + err);
-      return;
+      return err;
     }
+    return 'Event created';
+    console.log('Event created: %s', event.data.summary);
+  });*/
+  var result = calendar.events.insert({
+    auth: auth,
+    calendarId: 'primary',
+    resource: event,
+  }, function(err, event) {
+    if (err) {
+      console.log('There was an error contacting the Calendar service: ' + err);
+      // callback(err);
+    }
+    callback(err);
     console.log('Event created: %s', event.data.summary);
   });
+  console.log('insertEvent_ ' + result);
 }
 
 function deleteEvent(auth, event) {

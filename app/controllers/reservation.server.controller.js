@@ -66,6 +66,6 @@ exports.createRes = function (req, res) {
       return res.redirect('/');
     }
   });*/
-  calendarAPI.createEvent(req, reservation);
+  console.log('GOOGLE API call: ' + calendarAPI.createEvent(req, reservation));
   return res.redirect('/');
 };
