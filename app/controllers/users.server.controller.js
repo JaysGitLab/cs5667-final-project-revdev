@@ -112,3 +112,31 @@ exports.signout = function(req, res) {
   req.logout();
   res.redirect('/');
 };
+
+// Accepts user profile then looks for existing user with providerId and provider properties
+exports.saveOAuthUserProfile = function(req, profile, done) {
+  User.findOne({
+    provider: profile.provider,
+    providerId: profile.providerId
+  }, (err, user) => {
+    if (err) {
+      return done(err);
+    } else {
+      // If cannot find existing user, find unique username
+      if (!user) {
+        const possibleUsername = profile.username;
+
+        User.findUniqueUsername(possibleUsername, null, (availableUsername) => {
+          const newUser = new User(profile);
+          newUser.username = availableUsername;
+
+          newUser.save((err) => {
+            return done(err, newUser);
+          });
+        });
+      } else {
+        return done(err, user);
+      }
+    }
+  });
+};
