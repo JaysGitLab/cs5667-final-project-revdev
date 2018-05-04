@@ -52,9 +52,24 @@ describe('Reservation Controller Unit Tests:', () => {
         .field('startTime', '2018-04-30T16:00')
         .field('endTime', '2018-04-30T17:00')
         .field('areas[]', ['Picnic shelter'])
-        .field('eventType', '5ae7aacc8214600d674cd04d')
+        .field('eventType', reservation.eventType._id.toString())
         .field('comments', reservation.comments)
         .expect(200)
+        .end((err, res) => {
+          res.body.should.be.html;
+          done();
+      });
+    });
+    
+    it('Should not be able to create a reservation with longer than max days', (done) => {
+      request(app).post('/createRes/')
+        .field('username', reservation.username)
+        .field('startTime', '2018-04-30T16:00')
+        .field('endTime', '2018-05-02T17:00')
+        .field('areas[]', ['Picnic shelter'])
+        .field('eventType', reservation.eventType._id.toString())
+        .field('comments', reservation.comments)
+        .expect(302)
         .end((err, res) => {
           res.body.should.be.html;
           done();
