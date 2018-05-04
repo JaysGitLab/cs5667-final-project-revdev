@@ -29,7 +29,7 @@ exports.renderSignin = function(req, res, next) {
   if (!req.user) {
     res.render('signin', {
       title: 'Sign In Form',
-      messages: req.flash('error') || req.flash('info')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -40,7 +40,19 @@ exports.renderSignup = function(req, res, next) {
   if (!req.user) {
     res.render('signup', {
       title: 'Sign Up Form',
-      messages: req.flash('error')
+      messages: req.flash('error').concat(req.flash('info'))
+    });
+  } else {
+    return res.redirect('/');
+  }
+};
+
+exports.renderUpdate = function(req, res, next) {
+  if (req.user) {
+    res.render('updateUser', {
+      title: 'Update Profile Form',
+      user: req.user,
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -69,6 +81,31 @@ exports.signup = function(req, res, next) {
   } else {
     return res.redirect('/');
   }
+};
+
+exports.updateUser = function(req, res, next) {
+  const user = req.user;
+
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+  user.phone = req.body.phone;
+  user.username = req.body.username;
+  user.password = req.body.password;
+  if (req.body.admin) {
+    user.admin = true;
+  } else {
+    user.admin = false;
+  }
+
+  user.save((err) => {
+    if (err) {
+      return res.status(400).send({
+        message: getErrorMessage(err)
+      });
+    } else {
+      return res.redirect('/');
+    }
+  });
 };
 
 exports.signout = function(req, res) {

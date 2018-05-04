@@ -5,6 +5,7 @@ exports.render = function (req, res) {
     title: 'Welcome to Green Valley Community Park',
     headline: 'Reservation System',
     userFullName: req.user ? req.user.fullName : '',
-    isAdmin: req.user ? req.user.isAdmin : false
+    isAdmin: req.user ? req.user.isAdmin : false,
+    messages: req.flash('error').concat(req.flash('info'))
   });
 };

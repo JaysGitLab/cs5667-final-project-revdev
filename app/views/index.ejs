@@ -5,6 +5,9 @@
         <title><%= title %></title>
     </head>
     <body>
+      <% for(var i in messages) { %>
+        <div class="flash"><%=messages[i] %></div>
+      <% } %>
       <!-- Load the static image file  -->
       <img src="img/GvcpLogo.png" alt="Logo">
       <h2><%= title%></h2>
@@ -14,6 +17,8 @@
         <% if (isAdmin) { %>
           <a href="/createEvent">Create an Event</a>
         <% } %>
+        <a href="/updateUser">Update profile</a>
+        <a href="/createRes">Make a reservation</a>
         <a href="/signout">Sign out</a>
       <% } else { %>
         <a href="/signup">Sign up</a>
