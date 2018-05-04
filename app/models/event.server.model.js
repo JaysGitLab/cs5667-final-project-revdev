@@ -14,7 +14,7 @@ const EventSchema = new Schema({
   numberOfPeopleTo: {
     type: Number,
     default: 30,
-    validate: [numberOfPeopleValidator, 'Minimum of people must be less than the maximum']
+    validate: [numberOfPeopleValidator, 'Minimum number of people must be less than the maximum']
   },
   cost: {
     type: Number,
@@ -24,7 +24,7 @@ const EventSchema = new Schema({
   deposit: {
     type: Number,
     default: 0,
-    min: [0, 'Deposit cannot be less than 0 %'],
+    min: [0, 'Deposit cannot be less than 0%'],
     max: [100, 'Deposit cannot be more than 100%']
   },
   reminderEmail: {
