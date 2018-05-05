@@ -34,7 +34,8 @@ exports.renderCreateRes = function(req, res) {
 exports.getEventMaxDays = function(req, res, next) {
   Event.findOne({_id: req.body.eventType}, 'maxNumberOfDays', function(err, event) {
     if (err) {
-      next(err);
+      req.flash('error', getErrorMessage(err));
+      return res.redirect('/createRes');
     } else {
       res.event = event;
       next();
