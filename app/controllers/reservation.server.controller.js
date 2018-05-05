@@ -55,7 +55,7 @@ exports.createRes = function(req, res, next) {
     next();
   }
 
-  if(‌‌res.req.freeBusyStatus == 'Free'){
+  if(res.req.freeBusyStatus == 'Free'){
     reservation.save((err) => {
       if (err) {
         req.flash('error', getErrorMessage(err));
@@ -68,16 +68,16 @@ exports.createRes = function(req, res, next) {
       }
     });
   } else {
-    req.flash('error', 'Event overlap');
+    req.flash('error', 'Event overlap! There is already an event scheduled!');
     return res.redirect('/createRes');
   }
 };
 
 
 exports.redirectReservationPage = function(req, res){
-  if(req){
-    return res.redirect('/createRes');
-  } else {
+  if(res.eventCreated){
     return res.redirect('/');
+  } else {
+    return res.redirect('/createRes');
   }
 };

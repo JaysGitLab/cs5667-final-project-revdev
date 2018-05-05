@@ -14,7 +14,7 @@ const CLIENT_SECRET = config.clientSecrete;
 exports.createEvent = function(req, res, next) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
-  console.log('event: ' + req);
+  console.log('event: ' + req.body.eventType);
   /*s.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
@@ -22,7 +22,30 @@ exports.createEvent = function(req, res, next) {
     authorize(JSON.parse(content), event, freeBusyStatus);
     //authorize(JSON.parse(content), insertEvent);
   });*/
-  var event = {req, reservation};
+  // var event = req.body;
+  let event = {
+    'summary': req.body.eventType,
+    'location': req.body.areas[0],
+    'description': req.body.username + '\n' + req.body.comments,
+    'start': {
+      'dateTime': new Date(req.body.startTime).toISOString(),
+      'timeZone': 'America/New_York',
+    },
+    'end': {
+      'dateTime': new Date(req.body.endTime).toISOString(),
+      'timeZone': 'America/New_York',
+    },
+    'attendees': [
+      {'email': req.body.username},
+    ],
+    'reminders': {
+      'useDefault': false,
+      'overrides': [
+        {'method': 'email', 'minutes': 24 * 60},
+        {'method': 'popup', 'minutes': 10},
+      ],
+    },
+  };
   var secret = fs.readFileSync(CLIENT_SECRET, 'utf8');
 
   var credentials = JSON.parse(secret);
@@ -72,11 +95,13 @@ exports.createEvent = function(req, res, next) {
   }, function(err, event) {
     if (err) {
       console.log('There was an error contacting the Calendar service: ' + err);
+      res.eventCreated = false;
       next(err);
       // callback(err);
     }
     // callback(err);
-    console.log('Event created: %s', event.data.summary);
+    console.log('Event created: %s', event.summary);
+    res.eventCreated = true;
     next()
   });
 };
