@@ -98,8 +98,8 @@ exports.createEvent = function(req, res, next) {
       console.log('There was an error contacting the Calendar service: ' + err);
       res.eventCreated = false;
       req.flash('error', 'There was an error contacting the Calendar service: ' + err);
-      return res.redirect('/createRes');
-      // next(err);
+      // return res.redirect('/createRes');
+      next(err);
     }
     console.log('Event created: %s', event.summary);
     res.eventCreated = true;

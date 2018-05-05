@@ -62,14 +62,15 @@ exports.createRes = function(req, res, next) {
         return res.redirect('/createRes');
         // next();
       } else {
-        req.flash('info', 'Reservation requested');
+        // req.flash('info', 'Reservation requested');
         // return res.redirect('/');
         next();
       }
     });
-  }
+  } else {
     req.flash('error', 'Event overlap! There is already an event scheduled!');
     return res.redirect('/createRes');
+  }
 };
 
 
