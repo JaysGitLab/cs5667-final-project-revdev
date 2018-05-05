@@ -19,4 +19,17 @@ module.exports = function(app) {
     .post(users.updateUser);
 
   app.get('/signout', users.signout);
+
+  app.get('/oauth/google', passport.authenticate('google', {
+    failureRedirect: '/signin',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ],
+  }));
+
+  app.get('/oauth/google/callback', passport.authenticate('google', {
+    failureRedirect: '/signin',
+    successRedirect: '/'
+  }));
 };
