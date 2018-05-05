@@ -19,10 +19,10 @@ exports.renderCreateRes = function(req, res) {
         res.redirect('/');
       } else {
         res.render('createRes', {
-        title: 'Create a Reservation',
-        user: req.user,
-        eventTypes: events,
-        messages: req.flash('error') || req.flash('info')
+          title: 'Create a Reservation',
+          user: req.user,
+          eventTypes: events,
+          messages: req.flash('error').concat(req.flash('info'))
         });
       }
     })
@@ -67,18 +67,17 @@ exports.createRes = function(req, res, next) {
         next();
       }
     });
-  } else {
+  }
     req.flash('error', 'Event overlap! There is already an event scheduled!');
     return res.redirect('/createRes');
-  }
 };
 
 
 exports.redirectReservationPage = function(req, res){
   if(res.eventCreated){
-    req.flash('info', 'Reservation requested');
+    req.flash('error', 'Reservation requested');
     return res.redirect('/');
-  } else {
-    return res.redirect('/createRes');
   }
+  req.flash('error', 'Reservation could not be created');
+    return res.redirect('/createRes');
 };
