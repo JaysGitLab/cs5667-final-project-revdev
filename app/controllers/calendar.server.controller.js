@@ -14,7 +14,8 @@ const CLIENT_SECRET = config.clientSecrete;
 exports.createEvent = function(req, res, next) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
-  console.log('event: ' + req.body.eventType);
+  //console.log('event: ' + req.body.eventType);
+  console.log('event: ' + res.req.res.event.eventType);
   /*s.readFile(CLIENT_SECRET, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
@@ -24,7 +25,7 @@ exports.createEvent = function(req, res, next) {
   });*/
   // var event = req.body;
   let event = {
-    'summary': req.body.eventType,
+    'summary': res.req.res.event.eventType,
     'location': req.body.areas[0],
     'description': req.body.username + '\n' + req.body.comments,
     'start': {
@@ -96,10 +97,10 @@ exports.createEvent = function(req, res, next) {
     if (err) {
       console.log('There was an error contacting the Calendar service: ' + err);
       res.eventCreated = false;
-      next(err);
-      // callback(err);
+      req.flash('error', 'There was an error contacting the Calendar service: ' + err);
+      return res.redirect('/createRes');
+      // next(err);
     }
-    // callback(err);
     console.log('Event created: %s', event.summary);
     res.eventCreated = true;
     next()
@@ -109,7 +110,7 @@ exports.createEvent = function(req, res, next) {
 exports.freeBusyStatus  = function(res, req, next) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
-  console.log('event: ' + res.body.eventType);
+  console.log('event: ' + res.res.event.eventType);
 
   var event = res.body;
   var secret = fs.readFileSync(CLIENT_SECRET, 'utf8');
@@ -267,7 +268,7 @@ function authorize(credentials, data, callback) {
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {getEventsCallback} callback The callback for the authorized client.
  */
-function getAccessToken(oAuth2Client, callback) {
+/*function getAccessToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
@@ -290,7 +291,7 @@ function getAccessToken(oAuth2Client, callback) {
       callback(oAuth2Client);
     });
   });
-}
+}*/
 
 /**
  * Lists the next 10 events on the user's primary calendar.
@@ -335,35 +336,35 @@ function listEvents(auth, event) {
 // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
 // stored credentials.
 
-function insertEvent(auth, event) {
-  const calendar = google.calendar({version: 'v3', auth});
-  console.log('create event -> ' + event.summary);
-  /*calendar.events.insert({
-    auth: auth,
-    calendarId: 'primary',
-    resource: event,
-  }, function(err, event) {
-    if (err) {
-      console.log('There was an error contacting the Calendar service: ' + err);
-      return err;
-    }
-    return 'Event created';
-    console.log('Event created: %s', event.data.summary);
-  });*/
-  var result = calendar.events.insert({
-    auth: auth,
-    calendarId: 'primary',
-    resource: event,
-  }, function(err, event) {
-    if (err) {
-      console.log('There was an error contacting the Calendar service: ' + err);
-      // callback(err);
-    }
-    callback(err);
-    console.log('Event created: %s', event.data.summary);
-  });
-  console.log('insertEvent_ ' + result);
-}
+// function insertEvent(auth, event) {
+//   const calendar = google.calendar({version: 'v3', auth});
+//   console.log('create event -> ' + event.summary);
+//   /*calendar.events.insert({
+//     auth: auth,
+//     calendarId: 'primary',
+//     resource: event,
+//   }, function(err, event) {
+//     if (err) {
+//       console.log('There was an error contacting the Calendar service: ' + err);
+//       return err;
+//     }
+//     return 'Event created';
+//     console.log('Event created: %s', event.data.summary);
+//   });*/
+//   var result = calendar.events.insert({
+//     auth: auth,
+//     calendarId: 'primary',
+//     resource: event,
+//   }, function(err, event) {
+//     if (err) {
+//       console.log('There was an error contacting the Calendar service: ' + err);
+//       // callback(err);
+//     }
+//     callback(err);
+//     console.log('Event created: %s', event.data.summary);
+//   });
+//   console.log('insertEvent_ ' + result);
+// }
 
 function deleteEvent(auth, event) {
   const calendar = google.calendar({version: 'v3', auth});
@@ -380,7 +381,7 @@ function deleteEvent(auth, event) {
   });
 }
 
-function freeBusyStatus (auth, event) {
+/*function freeBusyStatus (auth, event) {
   // event.event
   const startDate = new Date(event.req.body.startTime).toISOString(); //new Date('20 April 2018 12:00').toISOString();
   const endDate = new Date(event.req.body.endTime).toISOString(); //new Date('22 April 2018 13:00').toISOString();
@@ -444,3 +445,4 @@ function freeBusyStatus (auth, event) {
     }
   });
 }
+*/

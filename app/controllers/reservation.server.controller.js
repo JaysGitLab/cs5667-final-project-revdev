@@ -32,7 +32,7 @@ exports.renderCreateRes = function(req, res) {
 };
 
 exports.getEventMaxDays = function(req, res, next) {
-  Event.findOne({_id: req.body.eventType}, 'maxNumberOfDays', function(err, event) {
+  Event.findOne({_id: req.body.eventType}, function(err, event) {
     if (err) {
       req.flash('error', getErrorMessage(err));
       return res.redirect('/createRes');
@@ -51,16 +51,16 @@ exports.createRes = function(req, res, next) {
   let maxEndDate = new Date(reservation.startTime.getTime() + (maxDays * 24 * 60 * 60 * 1000));
   if (reservation.endTime.getTime() > maxEndDate.getTime()) {
     req.flash('error', 'Event duration cannot be longer than max number of days for event type');
-    // return res.redirect('/createRes');
-    next();
+    return res.redirect('/createRes');
+    // next();
   }
 
   if(res.req.freeBusyStatus == 'Free'){
     reservation.save((err) => {
       if (err) {
         req.flash('error', getErrorMessage(err));
-        // return res.redirect('/createRes');
-        next();
+        return res.redirect('/createRes');
+        // next();
       } else {
         req.flash('info', 'Reservation requested');
         // return res.redirect('/');
@@ -76,6 +76,7 @@ exports.createRes = function(req, res, next) {
 
 exports.redirectReservationPage = function(req, res){
   if(res.eventCreated){
+    req.flash('info', 'Reservation requested');
     return res.redirect('/');
   } else {
     return res.redirect('/createRes');
