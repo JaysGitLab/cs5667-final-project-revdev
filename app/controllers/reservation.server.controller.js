@@ -47,17 +47,12 @@ exports.createRes = function(req, res) {
   });
 };
 
-exports.list = function(req, res) {
-  Reservation.find().exec((err, listReservation) => {
-    if (err) {
-      return res.status(400).send({
-        message: getErrorMessage(err)
-      });
-    } else {
-      res.status(200).json(listReservation);
-    }
-  });
+function getNameFromEventId (id) {
+  Event.findOne({'_id': id}, 'eventType', function() {
+    
+  })
 };
+
 
 exports.renderList = function(req, res) {
   Reservation.find().exec((err, listReservation) => {
@@ -68,7 +63,7 @@ exports.renderList = function(req, res) {
       for (var i=0; i<listReservation.length;i++) {
         jsonString = JSON.stringify(listReservation[i]);
         stringRes.push(jsonString.split("\",\""));
-      } 
+      }
       res.render('listRes', {
       title: 'View all Reservations',
       list: stringRes,

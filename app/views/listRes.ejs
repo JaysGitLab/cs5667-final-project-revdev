@@ -26,9 +26,9 @@
       <% for(var j in list) { %>
         <tr>
           <th><%- list[j][2].substr(11,) %></th>
-          <th><%- list[j][0].substr(12,) %></th>
-          <th><%- list[j][3].substr(12,) %></th>
-          <th><%- list[j][4].substr(10,) %></th>
+          <th><%- new Date(list[j][0].substr(12,)).toLocaleString() %></th>
+          <th><%- new Date(list[j][3].substr(12,)).toLocaleString() %></th>
+          <th><%- new Date(list[j][4].substr(10,)).toLocaleString() %></th>
           <th><%- list[j][1].split("\"")[2] %></th>
           <th><%- list[j][5].substr(12,) %></th>
           <th><%- list[j][6].substr(11,) %></th>
