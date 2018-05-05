@@ -1,5 +1,6 @@
-const Reservation = require('mongoose').model('Reservation');
-const Event = require('mongoose').model('Event');
+const mongoose = require('mongoose');
+const Reservation = mongoose.model('Reservation');
+const Event = mongoose.model('Event');
 const JSON = require('circular-json');
 
 function getErrorMessage (err) {
@@ -47,9 +48,11 @@ exports.createRes = function(req, res) {
   });
 };
 
-function getNameFromEventId (id) {
-  Event.findOne({'_id': id}, 'eventType', function() {
-    
+function getNameFromEventId (id, fn) {
+  obj_id = mongoose.Types.ObjectId(id);
+  Event.findById(obj_id, 'eventType').exec(function(err, eType) {
+    if (err) return handleError(err);
+    fn(eType.eventType);
   })
 };
 
@@ -62,7 +65,17 @@ exports.renderList = function(req, res) {
       var stringRes = []
       for (var i=0; i<listReservation.length;i++) {
         jsonString = JSON.stringify(listReservation[i]);
-        stringRes.push(jsonString.split("\",\""));
+        jsonString = jsonString.split("\",\"");
+        var new_string;
+        // There is some weird scoping issue happening here, it correctly gets the information
+        // but it can't be accessed outside the scope of the callback function.
+        getNameFromEventId(jsonString[5].substr(12,), function(string5){
+          this.new_string = string5;
+          console.log(this.new_string); // 'Birthday'
+        });
+        console.log(this.new_string); // undefined
+        jsonString[5] = new_string;
+        stringRes.push(jsonString);
       }
       res.render('listRes', {
       title: 'View all Reservations',
