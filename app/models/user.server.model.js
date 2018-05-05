@@ -56,6 +56,24 @@ UserSchema.pre('save', function(next) {
   next();
 });
 
+// Static method to find available unique username for new users
+UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
+  var possibleUsername = username + (suffix || '');
+  this.findOne({
+    username: possibleUsername
+  }, (err, user) => {
+    if (!err) {
+      if (!user) {
+        callback(possibleUsername);
+      } else {
+        return this.findUniqueUsername(username, (suffix || 0) + 1, callback);
+      }
+    } else {
+      callback(null);
+    }
+  });
+};
+
 // Instance method, hashes password string with crypto mod
 UserSchema.methods.hashPassword = function(password) {
   return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha1').toString('base64');
