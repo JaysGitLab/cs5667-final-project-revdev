@@ -16,11 +16,11 @@
     </div>
     <div>
       <label>Start Date/Time:</label>
-      <input type="datetime-local" name="startTime" />
+      <input type="datetime-local" name="starttime" /> (Format MM/DD/YYYY HH:MM AM)
     </div>
     <div>
       <label>End Date/Time:</label>
-      <input type="datetime-local" name="endTime" />
+      <input type="datetime-local" name="endTime" /> (Format MM/DD/YYYY HH:MM AM)
     </div>
     <div>
       <label>Area(s) Needed:</label><br />
@@ -29,15 +29,16 @@
     </div>
     <div>
       <label>Purpose:</label>
-      <% for(var i in eventTypes) {%>
         <select name="eventType">
+        <% for(var i in eventTypes) {%>
           <option value="<%= eventTypes[i]._id %>"><%= eventTypes[i].eventType %></option>
+        <% } %>
         </select>
-      <% } %>
-        <ul><% for(var i in eventTypes) {%>
+        <ul>
+          <% for(var i in eventTypes) {%>
           <li><%= eventTypes[i].eventType %>: <%= eventTypes[i].numberOfPeopleFrom %>-<%= eventTypes[i].numberOfPeopleTo %> people, cost $<%= eventTypes[i].cost %>, deposit $<%= eventTypes[i].deposit %>, free cancelation within <%= eventTypes[i].freeCancelation %> day(s), <%= eventTypes[i].maxNumberOfDays %> day(s) maximum</li>
+          <% } %>
         </ul>
-      <% } %>
     </div>
     <div>
       <label>Other Relevant Information:</label><br />
