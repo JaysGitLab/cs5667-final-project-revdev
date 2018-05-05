@@ -11,7 +11,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = config.tokenPath;
 const CLIENT_SECRET = config.clientSecrete;
 
-exports.createEvent = function(err, req, res, next) {
+exports.createEvent = function(req, res, next) {
   // Load client secrets from a local file.
   console.log('loading client secrets');
   console.log('event: ' + req);
@@ -42,19 +42,66 @@ exports.createEvent = function(err, req, res, next) {
     callback(oAuth2Client, data);
 
   });*/
-  var token = fs.readFileSync(TOKEN_PATH, 'utf8');
+  let token = fs.readFileSync(TOKEN_PATH, 'utf8');
   console.log('Google Calendar authentication was successful');
   oAuth2Client.setCredentials(JSON.parse(token));
   //insertEvent(oAuth2Client, event);
-  res.token = oAuth2Client;
-  res.event = event;
-  next();
+  // res.token = oAuth2Client;
+  // res.event = event;
+  // next();
+
+  let auth = oAuth2Client;
+  const calendar = google.calendar({version: 'v3', auth});
+  console.log('create event -> ' + event.summary);
+  /*calendar.events.insert({
+    auth: auth,
+    calendarId: 'primary',
+    resource: event,
+  }, function(err, event) {
+    if (err) {
+      console.log('There was an error contacting the Calendar service: ' + err);
+      return err;
+    }
+    return 'Event created';
+    console.log('Event created: %s', event.data.summary);
+  });*/
+  calendar.events.insert({
+    auth: auth,
+    calendarId: 'primary',
+    resource: event,
+  }, function(err, event) {
+    if (err) {
+      console.log('There was an error contacting the Calendar service: ' + err);
+      next(err);
+      // callback(err);
+    }
+    // callback(err);
+    console.log('Event created: %s', event.data.summary);
+    next()
+  });
 };
 
-exports.freeBusyStatus  = function(err, res, req, next) {
+exports.freeBusyStatus  = function(res, req, next) {
+  // Load client secrets from a local file.
+  console.log('loading client secrets');
+  console.log('event: ' + res.body.eventType);
+
+  var event = res.body;
+  var secret = fs.readFileSync(CLIENT_SECRET, 'utf8');
+
+  var credentials = JSON.parse(secret);
+  console.log('Test ' + credentials.installed);
+  const {client_secret, client_id, redirect_uris} = credentials.installed;
+  const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris[0]);
+
+  var token = fs.readFileSync(TOKEN_PATH, 'utf8');
+  console.log('Google Calendar authentication was successful');
+  oAuth2Client.setCredentials(JSON.parse(token));
+  var auth = oAuth2Client;
+
   // event.event
-  const startDate = new Date(event.req.body.startTime).toISOString(); //new Date('20 April 2018 12:00').toISOString();
-  const endDate = new Date(event.req.body.endTime).toISOString(); //new Date('22 April 2018 13:00').toISOString();
+  const startDate = new Date(event.startTime).toISOString(); //new Date('20 April 2018 12:00').toISOString();
+  const endDate = new Date(event.endTime).toISOString(); //new Date('22 April 2018 13:00').toISOString();
   // 2018-04-20T16:00:00.000Z
   var calID = 'primary';
 
@@ -70,11 +117,15 @@ exports.freeBusyStatus  = function(err, res, req, next) {
 
   calendar.freebusy.query (check, function (err, response) {
     if (err) {
-      console.log ('error: ' + err)
+      console.log ('error: ' + err);
+      next(err);
     } else {
       var events = response.data.calendars['primary']['busy'].length;
       if (events === 0) {
         console.log('No upcoming events found.');
+        res.freeBusyStatus = 'Free';
+        next();
+        /*
         let e = {
           'summary': event.req.body.eventType,
           'location': event.req.body.areas[0],
@@ -106,15 +157,19 @@ exports.freeBusyStatus  = function(err, res, req, next) {
             insertEvent(auth, e);
             return;
           }
-        });
+        });*/
       } else {
         console.log('busy in here...');
         console.log('Event ' + event.summary + ' could not be crated');
-        event.req.flash('error', getErrorMessage(err));
+        // event.req.flash('error', getErrorMessage(err));
+        res.freeBusyStatus = 'Busy';
+        res.busyStartTime = startDate;
+        res.busyEndTime = endDate;
+        next();
       }
     }
   });
-}
+};
 
 exports.removeEvent = function (date) {
   // Load client secrets from a local file.
@@ -363,14 +418,4 @@ function freeBusyStatus (auth, event) {
       }
     }
   });
-}
-
-function getErrorMessage(err) {
-  if (err.errors) {
-    for (let errName in err.errors) {
-      if (err.errors[errName].message) return err.errors[errName].message;
-    }
-  } else {
-    return err.message;
-  }
 }

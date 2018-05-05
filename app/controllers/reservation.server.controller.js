@@ -43,10 +43,10 @@ exports.getEventMaxDays = function(req, res, next) {
   });
 };
 
-exports.createRes = function(err, req, res, next) {
-  const reservation = new Reservation(req.body);
-  reservation.startTime = new Date(req.body.startTime);
-  reservation.endTime = new Date(req.body.endTime);
+exports.createRes = function(req, res, next) {
+  const reservation = new Reservation(res.req.body);
+  reservation.startTime = new Date(res.req.body.startTime);
+  reservation.endTime = new Date(res.req.body.endTime);
   let maxDays = res.event.maxNumberOfDays;
   let maxEndDate = new Date(reservation.startTime.getTime() + (maxDays * 24 * 60 * 60 * 1000));
   if (reservation.endTime.getTime() > maxEndDate.getTime()) {
@@ -55,17 +55,22 @@ exports.createRes = function(err, req, res, next) {
     next();
   }
 
-  reservation.save((err) => {
-    if (err) {
-      req.flash('error', getErrorMessage(err));
-      // return res.redirect('/createRes');
-      next();
-    } else {
-      req.flash('info', 'Reservation requested');
-      // return res.redirect('/');
-      next();
-    }
-  });
+  if(‌‌res.req.freeBusyStatus == 'Free'){
+    reservation.save((err) => {
+      if (err) {
+        req.flash('error', getErrorMessage(err));
+        // return res.redirect('/createRes');
+        next();
+      } else {
+        req.flash('info', 'Reservation requested');
+        // return res.redirect('/');
+        next();
+      }
+    });
+  } else {
+    req.flash('error', 'Event overlap');
+    return res.redirect('/createRes');
+  }
 };
 
 
