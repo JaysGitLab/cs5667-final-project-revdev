@@ -5,5 +5,5 @@ module.exports = function(app) {
     .get(reservation.renderCreateRes)
     .post(reservation.getEventMaxDays, reservation.createRes)
   app.route('/listRes')
-     .get(reservation.renderList);
+     .get(reservation.getList, reservation.getNameFromEventId, reservation.renderList);
 };
