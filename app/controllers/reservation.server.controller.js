@@ -65,14 +65,6 @@ exports.createRes = function(req, res) {
   });
 };
 
-// function getNameFromEventId (id, fn) {
-//   obj_id = mongoose.Types.ObjectId(id);
-//   Event.findById(obj_id, 'eventType').exec(function(err, eType) {
-//     if (err) return handleError(err);
-//     fn(eType.eventType);
-//   })
-// };
-
 exports.getList = function(req, res, next) {
   Reservation.find().exec((err, listReservation) => {
     if (err) {
@@ -82,74 +74,38 @@ exports.getList = function(req, res, next) {
       for (var i=0; i<listReservation.length;i++) {
         jsonString = JSON.stringify(listReservation[i]);
         jsonString = jsonString.split("\",\"");
-        //var new_string;
-        // There is some weird scoping issue happening here, it correctly gets the information
-        // but it can't be accessed outside the scope of the callback function.
-        // getNameFromEventId(jsonString[5].substr(12,), function(string5){
-        //   this.new_string = string5;
-        //   console.log(this.new_string); // 'Birthday'
-        // });
-        //console.log(this.new_string); // undefined
         jsonString[5] = jsonString[5].substr(12,);
         stringRes.push(jsonString);
       }
       res.listRes = stringRes;
-      console.log("getList", stringRes);
       next();
     }
   });
 };
 
 exports.getNameFromEventId = function(req, res, next) {
-  var listReservations = res.listRes;
-  for (var i=0; i<listReservations.length; i++) {
-    console.log("getNameFromEventId", listReservations[i][5]);
-    obj_id = mongoose.Types.ObjectId(listReservations[i][5]);
-    var strings;
-    Event.findById(obj_id, 'eventType').exec(function(err, eType) {
-      if (err) return handleError(err);
-      console.log("types:", eType.eventType);
-      this.strings = eType.eventType;
-    })
-    console.log("strings", strings);
-    listReservations[i][5] = strings;
-  }
-  res.listRes = listReservations;
-  next();
+  Event.find().exec((err, eType) => {
+    if (err) {
+      return handleError(err);
+    } else {
+      res.listRes = res.listRes;
+      res.eventTypes = eType;
+      next();
+    }
+  });
 };
 
 
 exports.renderList = function(req, res) {
   if (req.user) {
-    // Reservation.find().exec((err, listReservation) => {
-    //   if (err) {
-    //     return res.redirect('/');
-    //   } else {
-
-    //     //var stringRes = []
-    //     // for (var i=0; i<listReservation.length;i++) {
-    //     //   jsonString = JSON.stringify(listReservation[i]);
-    //     //   jsonString = jsonString.split("\",\"");
-    //     //   var new_string;
-    //     //   // There is some weird scoping issue happening here, it correctly gets the information
-    //     //   // but it can't be accessed outside the scope of the callback function.
-    //     //   getNameFromEventId(jsonString[5].substr(12,), function(string5){
-    //     //     this.new_string = string5;
-    //     //     console.log(this.new_string); // 'Birthday'
-    //     //   });
-    //     //   console.log(this.new_string); // undefined
-    //     //   jsonString[5] = new_string;
-    //     //   stringRes.push(jsonString);
-    //     // }
-    //     res.render('listRes', {
-    //     title: 'View all Reservations',
-    //     list: stringRes,
-    //     messages: req.flash('error')
-    //     });
-    //   }
-    // });
-    console.log("renderList", res.listRes);
     var stringRes = res.listRes;
+    for (var i=0; i<stringRes.length; i++) {
+      for (var j=0; j<res.eventTypes.length; j++) {
+        if (stringRes[i][5].localeCompare(res.eventTypes[j]._id.toString()) == 0) {
+          stringRes[i][5] = res.eventTypes[j].eventType;
+        }
+      }
+    }
     res.render('listRes', {
     title: 'View all Reservations',
     list: stringRes,
