@@ -40,7 +40,7 @@ exports.createEvent = function (req, res, next) {
   var secret = fs.readFileSync(CLIENT_SECRET, 'utf8');
 
   var credentials = JSON.parse(secret);
-  console.log('Test ' + credentials.installed);
+  // console.log('Test ' + credentials.installed);
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris[0]);
 
@@ -62,7 +62,7 @@ exports.createEvent = function (req, res, next) {
       req.flash('error', 'There was an error contacting the Calendar service: ' + err);
       next(err);
     }
-    console.log('Event created: %s', event.summary);
+    console.log('Event created: %s', res.req.res.event.eventType);
     res.eventCreated = true;
     next()
   });
@@ -77,7 +77,7 @@ exports.freeBusyStatus = function (res, req, next) {
   var secret = fs.readFileSync(CLIENT_SECRET, 'utf8');
 
   var credentials = JSON.parse(secret);
-  console.log('Test ' + credentials.installed);
+  // console.log('Test ' + credentials.installed);
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris[0]);
 
@@ -114,7 +114,7 @@ exports.freeBusyStatus = function (res, req, next) {
         next();
       } else {
         console.log('busy in here...');
-        console.log('Event ' + event.summary + ' could not be crated');
+        console.log('Event ' + res.res.event.eventType + ' could not be crated');
         // event.req.flash('error', getErrorMessage(err));
         res.freeBusyStatus = 'Busy';
         res.busyStartTime = startDate;
@@ -144,7 +144,7 @@ exports.removeEvent = function (date) {
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, data, callback) {
-  console.log('Test ' + credentials.installed);
+  // console.log('Test ' + credentials.installed);
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris[0]);
 

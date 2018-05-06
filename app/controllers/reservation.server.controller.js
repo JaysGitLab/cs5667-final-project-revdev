@@ -75,7 +75,7 @@ exports.createRes = function (req, res, next) {
 
 exports.redirectReservationPage = function (req, res) {
   if (res.eventCreated) {
-    req.flash('error', 'Reservation requested');
+    req.flash('error', 'Reservation requested and email sent');
     return res.redirect('/');
   }
   req.flash('error', 'Reservation could not be created');
