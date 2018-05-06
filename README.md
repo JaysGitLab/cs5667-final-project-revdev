@@ -24,4 +24,6 @@ cs5667-final-project-revdev created by GitHub Classroom
 - Sign up
 - Sign in
 - Update profile
+- Create a Reservation
+- Create an Event
 - Sign out
