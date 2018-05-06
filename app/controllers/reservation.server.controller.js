@@ -75,30 +75,34 @@ function getNameFromEventId (id, fn) {
 
 
 exports.renderList = function(req, res) {
-  Reservation.find().exec((err, listReservation) => {
-    if (err) {
-      return res.redirect('/');
-    } else {
-      var stringRes = []
-      for (var i=0; i<listReservation.length;i++) {
-        jsonString = JSON.stringify(listReservation[i]);
-        jsonString = jsonString.split("\",\"");
-        var new_string;
-        // There is some weird scoping issue happening here, it correctly gets the information
-        // but it can't be accessed outside the scope of the callback function.
-        getNameFromEventId(jsonString[5].substr(12,), function(string5){
-          this.new_string = string5;
-          console.log(this.new_string); // 'Birthday'
+  if (req.user) {
+    Reservation.find().exec((err, listReservation) => {
+      if (err) {
+        return res.redirect('/');
+      } else {
+        var stringRes = []
+        for (var i=0; i<listReservation.length;i++) {
+          jsonString = JSON.stringify(listReservation[i]);
+          jsonString = jsonString.split("\",\"");
+          var new_string;
+          // There is some weird scoping issue happening here, it correctly gets the information
+          // but it can't be accessed outside the scope of the callback function.
+          getNameFromEventId(jsonString[5].substr(12,), function(string5){
+            this.new_string = string5;
+            console.log(this.new_string); // 'Birthday'
+          });
+          console.log(this.new_string); // undefined
+          jsonString[5] = new_string;
+          stringRes.push(jsonString);
+        }
+        res.render('listRes', {
+        title: 'View all Reservations',
+        list: stringRes,
+        messages: req.flash('error')
         });
-        console.log(this.new_string); // undefined
-        jsonString[5] = new_string;
-        stringRes.push(jsonString);
       }
-      res.render('listRes', {
-      title: 'View all Reservations',
-      list: stringRes,
-      messages: req.flash('error')
-      });
-    }
-  });
+    });
+  } else {
+    return res.redirect('/');
+  }
 };
