@@ -23,6 +23,7 @@ cs5667-final-project-revdev created by GitHub Classroom
 # Working features
 - Sign up
 - Sign in
+- Google OAuth
 - Update profile
 - Create a Reservation
 - Create an Event
