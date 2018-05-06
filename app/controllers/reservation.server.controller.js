@@ -2,7 +2,7 @@ const Reservation = require('mongoose').model('Reservation');
 const Event = require('mongoose').model('Event');
 const calendarAPI = require('./calendar.server.controller');
 
-function getErrorMessage (err) {
+function getErrorMessage(err) {
   if (err.errors) {
     for (let errName in err.errors) {
       if (err.errors[errName].message) return err.errors[errName].message;
@@ -12,9 +12,9 @@ function getErrorMessage (err) {
   }
 }
 
-exports.renderCreateRes = function(req, res) {
+exports.renderCreateRes = function (req, res) {
   if (req.user) {
-    Event.find({}, '', function(err, events) {
+    Event.find({}, '', function (err, events) {
       if (err) {
         res.redirect('/');
       } else {
@@ -31,8 +31,8 @@ exports.renderCreateRes = function(req, res) {
   }
 };
 
-exports.getEventMaxDays = function(req, res, next) {
-  Event.findOne({_id: req.body.eventType}, function(err, event) {
+exports.getEventMaxDays = function (req, res, next) {
+  Event.findOne({_id: req.body.eventType}, function (err, event) {
     if (err) {
       req.flash('error', getErrorMessage(err));
       return res.redirect('/createRes');
@@ -43,7 +43,7 @@ exports.getEventMaxDays = function(req, res, next) {
   });
 };
 
-exports.createRes = function(req, res, next) {
+exports.createRes = function (req, res, next) {
   const reservation = new Reservation(res.req.body);
   reservation.startTime = new Date(res.req.body.startTime);
   reservation.endTime = new Date(res.req.body.endTime);
@@ -52,10 +52,9 @@ exports.createRes = function(req, res, next) {
   if (reservation.endTime.getTime() > maxEndDate.getTime()) {
     req.flash('error', 'Event duration cannot be longer than max number of days for event type');
     return res.redirect('/createRes');
-    // next();
   }
 
-  if(res.req.freeBusyStatus == 'Free'){
+  if (res.req.freeBusyStatus == 'Free') {
     reservation.save((err) => {
       if (err) {
         req.flash('error', getErrorMessage(err));
@@ -74,11 +73,11 @@ exports.createRes = function(req, res, next) {
 };
 
 
-exports.redirectReservationPage = function(req, res){
-  if(res.eventCreated){
+exports.redirectReservationPage = function (req, res) {
+  if (res.eventCreated) {
     req.flash('error', 'Reservation requested');
     return res.redirect('/');
   }
   req.flash('error', 'Reservation could not be created');
-    return res.redirect('/createRes');
+  return res.redirect('/createRes');
 };
