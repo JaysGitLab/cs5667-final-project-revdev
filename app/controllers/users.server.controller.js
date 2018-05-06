@@ -29,7 +29,7 @@ exports.renderSignin = function(req, res, next) {
   if (!req.user) {
     res.render('signin', {
       title: 'Sign In Form',
-      messages: req.flash('error') || req.flash('info')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -40,7 +40,7 @@ exports.renderSignup = function(req, res, next) {
   if (!req.user) {
     res.render('signup', {
       title: 'Sign Up Form',
-      messages: req.flash('error')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -52,7 +52,7 @@ exports.renderUpdate = function(req, res, next) {
     res.render('updateUser', {
       title: 'Update Profile Form',
       user: req.user,
-      messages: req.flash('error')
+      messages: req.flash('error').concat(req.flash('info'))
     });
   } else {
     return res.redirect('/');
@@ -111,4 +111,32 @@ exports.updateUser = function(req, res, next) {
 exports.signout = function(req, res) {
   req.logout();
   res.redirect('/');
+};
+
+// Accepts user profile then looks for existing user with providerId and provider properties
+exports.saveOAuthUserProfile = function(req, profile, done) {
+  User.findOne({
+    provider: profile.provider,
+    providerId: profile.providerId
+  }, (err, user) => {
+    if (err) {
+      return done(err);
+    } else {
+      // If cannot find existing user, find unique username
+      if (!user) {
+        const possibleUsername = profile.username;
+
+        User.findUniqueUsername(possibleUsername, null, (availableUsername) => {
+          const newUser = new User(profile);
+          newUser.username = availableUsername;
+
+          newUser.save((err) => {
+            return done(err, newUser);
+          });
+        });
+      } else {
+        return done(err, user);
+      }
+    }
+  });
 };

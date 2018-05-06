@@ -1,4 +1,4 @@
-const nodemail = require('../libs/mail');
+/*const nodemail = require('../libs/mail');
 const config = require('../../config/config');
 
 var mailOptions = {
@@ -6,7 +6,7 @@ var mailOptions = {
   to: config.email,
   subject: 'Sending Email using Node.js',
   text: 'That was easy!'
-};
+};*/
 
 // Create a new 'render' controller method
 exports.render = function (req, res) {
@@ -15,6 +15,7 @@ exports.render = function (req, res) {
     title: 'Welcome to Green Valley Community Park',
     headline: 'Reservation System',
     userFullName: req.user ? req.user.fullName : '',
-    test: nodemail.sendMail(mailOptions)
+    messages: req.flash('error').concat(req.flash('info'))
+    //nodemail.sendMail(mailOptions)
   });
 };
