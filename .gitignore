@@ -63,3 +63,5 @@ typings/
 # Private application files
 config/env/development.js
 config/env/test.js
+config/env/client_secret.json
+config/env/token.json

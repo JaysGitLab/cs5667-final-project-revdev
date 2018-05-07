@@ -4,6 +4,7 @@ const should = require('should');
 const mongoose = require('mongoose');
 const Event = mongoose.model('Event');
 const Reservation = mongoose.model('Reservation');
+const calendarAPI = require('../controllers/calendar.server.controller');
 
 let event, reservation;
 
@@ -75,9 +76,17 @@ describe('Reservation Controller Unit Tests:', () => {
           done();
       });
     });
+
+    // Test 7 checks time overlap in calender and tries to save a reservation twice
+    it('Should not be able to save a second event at the same time', () => {
+      reservation.save((err) => {
+        should.exist(err);
+      });
+    });
   });
 
   afterEach((done) => {
+    calendarAPI.removeEvent(reservation.startTime);
     Reservation.remove(() => {
     });
     Event.remove(() => {
