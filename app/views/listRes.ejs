@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      <%=title %>
+  </title>
+</head>
+<body>
+  <a href="/">Home</a>
+  <% for(var i in messages) { %>
+    <div class="flash"><%=messages[i] %></div>
+  <% } %>
+  <form action="/listRes" method="post">
+    <div>
+      <label>List of Reservations</label>
+      <table>
+        <tr>
+          <th>Username</th>
+          <th>Created At</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Areas</th>
+          <th>Event Type</th>
+          <th>Comments</th>
+        </tr>
+      <% for(var j in list) { %>
+        <tr>
+          <th><%- list[j][2].substr(11,) %></th>
+          <th><%- new Date(list[j][0].substr(12,)).toLocaleString() %></th>
+          <th><%- new Date(list[j][3].substr(12,)).toLocaleString() %></th>
+          <th><%- new Date(list[j][4].substr(10,)).toLocaleString() %></th>
+          <th><%- list[j][1].split("\"")[2] %></th>
+          <th><%- list[j][5] %></th>
+          <th><%- list[j][6].substr(11,) %></th>
+        </tr>
+      <% } %>
+      </table>
+    </div>
+  </form>
+</body>
+</html>

@@ -1,5 +1,7 @@
-const Reservation = require('mongoose').model('Reservation');
-const Event = require('mongoose').model('Event');
+const mongoose = require('mongoose');
+const Reservation = mongoose.model('Reservation');
+const Event = mongoose.model('Event');
+const JSON = require('circular-json');
 
 function getErrorMessage (err) {
   if (err.errors) {
@@ -61,4 +63,55 @@ exports.createRes = function(req, res) {
     req.flash('error', 'Reservation requested');
     return res.redirect('/');
   });
+};
+
+exports.getList = function(req, res, next) {
+  Reservation.find().exec((err, listReservation) => {
+    if (err) {
+      return res.redirect('/');
+    } else {
+      var stringRes = []
+      for (var i=0; i<listReservation.length;i++) {
+        jsonString = JSON.stringify(listReservation[i]);
+        jsonString = jsonString.split("\",\"");
+        jsonString[5] = jsonString[5].substr(12,);
+        stringRes.push(jsonString);
+      }
+      res.listRes = stringRes;
+      next();
+    }
+  });
+};
+
+exports.getNameFromEventId = function(req, res, next) {
+  Event.find().exec((err, eType) => {
+    if (err) {
+      return handleError(err);
+    } else {
+      res.listRes = res.listRes;
+      res.eventTypes = eType;
+      next();
+    }
+  });
+};
+
+
+exports.renderList = function(req, res) {
+  if (req.user) {
+    var stringRes = res.listRes;
+    for (var i=0; i<stringRes.length; i++) {
+      for (var j=0; j<res.eventTypes.length; j++) {
+        if (stringRes[i][5].localeCompare(res.eventTypes[j]._id.toString()) == 0) {
+          stringRes[i][5] = res.eventTypes[j].eventType;
+        }
+      }
+    }
+    res.render('listRes', {
+    title: 'View all Reservations',
+    list: stringRes,
+    messages: req.flash('error')
+    });
+  } else {
+    return res.redirect('/');
+  }
 };
